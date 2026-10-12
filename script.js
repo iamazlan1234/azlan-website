@@ -168,7 +168,7 @@ gameStar.addEventListener("click", function () {
 // Paste your Firebase Realtime Database URL here so every visitor shares one
 // leaderboard, e.g. "https://your-project-default-rtdb.firebaseio.com"
 // Leave it empty to keep scores on this device only.
-const LEADERBOARD_URL = "";
+const LEADERBOARD_URL = "https://project-blob-blob-blob-default-rtdb.firebaseio.com/";
 
 const LOCAL_BOARD_KEY = "starGameLeaderboard";
 const NAME_KEY = "starGamePlayerName";
