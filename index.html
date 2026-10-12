@@ -8,49 +8,63 @@
 </head>
 <body>
 
-<div class="azlan-box">
-  <h2>👋 Hi! My name is Azlan.</h2>
-  <p>This is a very random website. 🚀</p>
-</div>
+  <header>
+    <h1>Welcome to my website</h1>
+    <p>This is my website.</p>
+  </header>
 
-<button id="myButton">Click this button!</button>
-<p id="message"></p>
-<section class="game-card">
-  
-  
-  
-  
-  
-  <h2>⭐ Lets play a game!
-    
-   Catch the Star!</h2>
-  <p>Click as many stars as you can in 15 seconds!</p>
-
-
-<div class="game-stats">
-  <span>⭐ Score: <strong id="gameScore">0</strong></span>
-  <span>⏱️ Time: <strong id="gameTime">15</strong>s</span>
-  <span>🏆 Best: <strong id="gameHighScore">0</strong></span>
-</div>
-
-
-  <div id="gameArena" class="game-arena">
-    <p id="gameHint">Ready? Let's play!</p>
-    <button id="startGame">Start Game</button>
-    <button id="starTarget" class="game-star"
-      aria-label="Catch the star" hidden>⭐</button>
+  <div class="azlan-box">
+    <h2>👋 Hi! My name is Azlan.</h2>
+    <p>This is a very random website. 🚀</p>
   </div>
 
-  <p id="gameResult" aria-live="polite">
-    Your high score starts now!
-  </p>
-</section>
-  <h1>Welcome to my website</h1>
-  <p>This is my website.</p>
-  <button>Click me</button>
+  <main>
+    <h2>Try the button</h2>
+    <button id="myButton">Click this button!</button>
+    <p id="message" aria-live="polite"></p>
+  </main>
+
+  <section class="game-card">
+    <h2>⭐ Let's play a game: Catch the Star!</h2>
+    <p>Click as many stars as you can in 15 seconds!</p>
+
+    <div class="game-stats">
+      <span>⭐ Score: <strong id="gameScore">0</strong></span>
+      <span>⏱️ Time: <strong id="gameTime">15</strong>s</span>
+      <span>🏆 Best: <strong id="gameHighScore">0</strong></span>
+    </div>
+
+    <div id="gameArena" class="game-arena">
+      <p id="gameHint">Ready? Let's play!</p>
+      <button id="startGame">Start Game</button>
+      <button id="starTarget" class="game-star"
+        aria-label="Catch the star" hidden>⭐</button>
+    </div>
+
+    <p id="gameResult" aria-live="polite">
+      Your high score starts now!
+    </p>
+
+    <form id="scoreForm" class="score-form" hidden>
+      <label for="playerName">Add your score to the leaderboard:</label>
+      <div class="score-form-row">
+        <input id="playerName" type="text" maxlength="20" required
+          placeholder="Your name" autocomplete="nickname">
+        <button type="submit">Submit score</button>
+      </div>
+    </form>
+
+    <div class="leaderboard">
+      <h3>🏆 Leaderboard</h3>
+      <p id="leaderboardStatus" class="leaderboard-status">Loading...</p>
+      <ol id="leaderboardList"></ol>
+    </div>
+  </section>
+
+  <footer>
+    <p>Made by Azlan 💜</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
 </html>
-
-
