@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azlan's Games</title>
+  <link rel="stylesheet" href="style.css?v=6">
+</head>
+<body>
+
+  <header>
+    <h1>Welcome to my website</h1>
+    <p>Do you like it?</p>
+  </header>
+
+  <div class="azlan-box">
+    <h2>👋 Hi! My name is Azlan.</h2>
+    <p>This is a very random website. 🚀</p>
+  </div>
+
+  <main>
+    <h2>Try the button</h2>
+    <button id="myButton">Click this button!</button>
+    <p id="message" aria-live="polite"></p>
+  </main>
+
+  <section class="game-card">
+    <h2>🍪 Let's play a game: Catch the Cookie!</h2>
+    <p>Click as many cookies as you can in 15 seconds!</p>
+
+    <div class="game-stats">
+      <span>🍪 Score: <strong id="gameScore">0</strong></span>
+      <span>⏱️ Time: <strong id="gameTime">15</strong>s</span>
+      <span>🏆 Your Best: <strong id="gameHighScore">0</strong></span>
+    </div>
+
+    <div id="gameArena" class="game-arena">
+      <p id="gameHint">Ready? Let's play!</p>
+      <button id="startGame">Start Game</button>
+      <button id="starTarget" class="game-star"
+        aria-label="Catch the cookie" hidden>🍪</button>
+    </div>
+
+    <p id="gameResult" aria-live="polite">
+      Your high score starts now!
+    </p>
+
+    <form id="scoreForm" class="score-form" hidden>
+      <label for="playerName">Add your score to the leaderboard:</label>
+      <div class="score-form-row">
+        <input id="playerName" type="text" maxlength="20" required
+          placeholder="Your name" autocomplete="nickname">
+        <button type="submit">Submit score</button>
+      </div>
+    </form>
+
+    <div class="leaderboard">
+      <h3>🏆 Leaderboard</h3>
+      <p id="leaderboardStatus" class="leaderboard-status">Loading...</p>
+      <ol id="leaderboardList"></ol>
+    </div>
+  </section>
+
+  <footer>
+    <p><a href="index.html">← Back to the birthday invitation</a></p>
+    <p>Made by Azlan 💜</p>
+  </footer>
+
+  <button id="stickMan" class="stickman" aria-label="Stick man. Tap him and he runs to another corner.">
+    <svg viewBox="0 0 48 72" width="40" height="60" aria-hidden="true"
+      fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="12" r="9"/>
+      <path d="M24 21 V46"/>
+      <path d="M24 28 L9 38"/>
+      <path d="M24 28 L39 38"/>
+      <path d="M24 46 L11 66"/>
+      <path d="M24 46 L37 66"/>
+    </svg>
+  </button>
+
+  <script src="config.js?v=1"></script>
+  <script src="script.js?v=6"></script>
+</body>
+</html>

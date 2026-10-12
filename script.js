@@ -111,8 +111,6 @@ gameStartButton.addEventListener("click", function () {
 // 😋 Munching animation: a copy of the cookie gets eaten where it was
 // tapped, so the real cookie can jump away right away and the game stays fast.
 function munchEffect() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
   const left = gameStar.offsetLeft;
   const top = gameStar.offsetTop;
   const size = gameStar.offsetWidth;
@@ -165,10 +163,9 @@ gameStar.addEventListener("click", function () {
 });
 
 // 🏅 LEADERBOARD
-// Paste your Firebase Realtime Database URL here so every visitor shares one
-// leaderboard, e.g. "https://your-project-default-rtdb.firebaseio.com"
-// Leave it empty to keep scores on this device only.
-const LEADERBOARD_URL = "https://project-blob-blob-blob-default-rtdb.firebaseio.com/";
+// Uses the Firebase URL from config.js so every visitor shares one leaderboard.
+// If it is empty, scores are kept on this device only.
+const LEADERBOARD_URL = FIREBASE_URL; // set once in config.js
 
 const LOCAL_BOARD_KEY = "starGameLeaderboard";
 const NAME_KEY = "starGamePlayerName";
