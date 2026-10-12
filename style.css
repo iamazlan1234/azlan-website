@@ -412,13 +412,16 @@ button.bounce {
 }
 
 .stickman svg.hop {
-  animation: hop 0.5s ease;
+  animation: hop 0.7s ease-in-out;
 }
 
+/* Two bouncy hops with a little tilt while he runs to the next corner */
 @keyframes hop {
   0%, 100% { transform: translateY(0) rotate(0); }
-  30% { transform: translateY(-14px) rotate(-8deg); }
-  60% { transform: translateY(0) rotate(6deg); }
+  20% { transform: translateY(-18px) rotate(-12deg); }
+  40% { transform: translateY(0) rotate(8deg); }
+  60% { transform: translateY(-18px) rotate(12deg); }
+  80% { transform: translateY(0) rotate(-6deg); }
 }
 
 /* 📝 FOOTER */
@@ -462,21 +465,4 @@ footer p {
     transition: none;
   }
 
-  button.bounce {
-    animation: none;
-  }
-
-  .cookie-ghost,
-  .cookie-crumb,
-  .cookie-nom {
-    display: none;
-  }
-
-  .stickman {
-    transition: none;
-  }
-
-  .stickman svg.hop {
-    animation: none;
-  }
 }
