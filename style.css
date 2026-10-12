@@ -216,24 +216,81 @@ button.bounce {
   overflow-wrap: anywhere;
 }
 
-/* 🌟 THE MOVING STAR */
+/* 🍪 THE MOVING COOKIE */
 #starTarget.game-star {
   position: absolute;
   z-index: 2;
   padding: 8px;
-  border: 1px solid #fde68a;
+  border: 1px solid #d6a15f;
   border-radius: 50%;
-  background: #312e81;
+  background: #5b3a1e;
   font-size: 27px;
   line-height: 1.2;
-  box-shadow: 0 0 20px #facc60aa;
+  box-shadow: 0 0 20px #f59e0baa;
   cursor: pointer;
   touch-action: manipulation;
 }
 
 #starTarget.game-star:hover {
-  background: #4338ca;
-  box-shadow: 0 0 28px #facc60;
+  background: #7a4e28;
+  box-shadow: 0 0 28px #f59e0b;
+}
+
+/* 😋 MUNCHING ANIMATION */
+.cookie-ghost {
+  position: absolute;
+  z-index: 3;
+  box-sizing: content-box;
+  padding: 8px;
+  border: 1px solid #d6a15f;
+  border-radius: 50%;
+  background: #5b3a1e;
+  font-size: 27px;
+  line-height: 1.2;
+  pointer-events: none;
+  animation: munch 0.5s ease-in forwards;
+}
+
+@keyframes munch {
+  0%   { transform: scale(1, 1) rotate(0); opacity: 1; }
+  15%  { transform: scale(1.25, 0.7) rotate(-8deg); }
+  30%  { transform: scale(0.85, 1.15) rotate(6deg); }
+  45%  { transform: scale(1.2, 0.75) rotate(-6deg); }
+  65%  { transform: scale(0.7, 0.8) rotate(4deg); opacity: 1; }
+  100% { transform: scale(0, 0) rotate(0); opacity: 0; }
+}
+
+.cookie-crumb {
+  position: absolute;
+  z-index: 3;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #c68642;
+  pointer-events: none;
+  animation: crumb 0.6s ease-out forwards;
+}
+
+@keyframes crumb {
+  from { transform: translate(0, 0) scale(1); opacity: 1; }
+  to   { transform: translate(var(--dx), var(--dy)) scale(0.4); opacity: 0; }
+}
+
+.cookie-nom {
+  position: absolute;
+  z-index: 4;
+  transform: translateX(-50%);
+  color: #fde68a;
+  font-size: 15px;
+  font-weight: bold;
+  pointer-events: none;
+  animation: nom 0.7s ease-out forwards;
+}
+
+@keyframes nom {
+  from { transform: translate(-50%, 0); opacity: 1; }
+  to   { transform: translate(-50%, -28px); opacity: 0; }
 }
 
 /* Keep hidden game pieces hidden even though buttons set display */
@@ -327,6 +384,43 @@ button.bounce {
   color: #fde68a;
 }
 
+/* 🕴️ STICK MAN */
+.stickman {
+  --x: 12px;
+  --y: calc(100dvh - 72px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  color: #e2e8f0;
+  line-height: 0;
+  transform: translate(var(--x), var(--y));
+  transition: transform 0.7s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+/* Override the global button hover/active so he doesn't jump out of his corner */
+.stickman:hover,
+.stickman:active {
+  transform: translate(var(--x), var(--y));
+  box-shadow: none;
+  color: #fde68a;
+}
+
+.stickman svg.hop {
+  animation: hop 0.5s ease;
+}
+
+@keyframes hop {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(-14px) rotate(-8deg); }
+  60% { transform: translateY(0) rotate(6deg); }
+}
+
 /* 📝 FOOTER */
 footer {
   padding: 20px;
@@ -369,6 +463,20 @@ footer p {
   }
 
   button.bounce {
+    animation: none;
+  }
+
+  .cookie-ghost,
+  .cookie-crumb,
+  .cookie-nom {
+    display: none;
+  }
+
+  .stickman {
+    transition: none;
+  }
+
+  .stickman svg.hop {
     animation: none;
   }
 }

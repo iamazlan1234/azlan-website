@@ -46,7 +46,7 @@ function saveHighScore() {
   }
 }
 
-// ⭐ Move the star to a random spot
+// 🍪 Move the cookie to a random spot
 function moveStar() {
   const maxLeft = Math.max(0, gameArena.clientWidth - gameStar.offsetWidth - 16);
   const maxTop = Math.max(0, gameArena.clientHeight - gameStar.offsetHeight - 16);
@@ -93,7 +93,7 @@ gameStartButton.addEventListener("click", function () {
   gameHint.hidden = true;
   gameStar.hidden = false;
 
-  gameResult.textContent = "Go! Catch those stars!";
+  gameResult.textContent = "Go! Catch those cookies!";
   hideScoreForm();
 
   moveStar();
@@ -108,13 +108,59 @@ gameStartButton.addEventListener("click", function () {
   }, 1000);
 });
 
-// ⭐ Catch the star to earn points!
+// 😋 Munching animation: a copy of the cookie gets eaten where it was
+// tapped, so the real cookie can jump away right away and the game stays fast.
+function munchEffect() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const left = gameStar.offsetLeft;
+  const top = gameStar.offsetTop;
+  const size = gameStar.offsetWidth;
+  const centerX = left + size / 2;
+  const centerY = top + size / 2;
+
+  // The cookie getting munched
+  const ghost = document.createElement("span");
+  ghost.className = "cookie-ghost";
+  ghost.textContent = "🍪";
+  ghost.style.left = left + "px";
+  ghost.style.top = top + "px";
+  gameArena.append(ghost);
+  ghost.addEventListener("animationend", function () { ghost.remove(); });
+
+  // Crumbs flying out
+  for (let i = 0; i < 7; i++) {
+    const crumb = document.createElement("span");
+    const angle = (Math.PI * 2 * i) / 7 + Math.random() * 0.6;
+    const distance = 30 + Math.random() * 25;
+
+    crumb.className = "cookie-crumb";
+    crumb.style.left = centerX + "px";
+    crumb.style.top = centerY + "px";
+    crumb.style.setProperty("--dx", Math.cos(angle) * distance + "px");
+    crumb.style.setProperty("--dy", Math.sin(angle) * distance + "px");
+    gameArena.append(crumb);
+    crumb.addEventListener("animationend", function () { crumb.remove(); });
+  }
+
+  // "nom!" floating up
+  const nom = document.createElement("span");
+  nom.className = "cookie-nom";
+  nom.textContent = "nom!";
+  nom.style.left = centerX + "px";
+  nom.style.top = top + "px";
+  gameArena.append(nom);
+  nom.addEventListener("animationend", function () { nom.remove(); });
+}
+
+// 🍪 Catch the cookie to earn points!
 gameStar.addEventListener("click", function () {
   if (!gameRunning) return;
 
   starScore++;
   gameScoreDisplay.textContent = starScore;
 
+  munchEffect();
   moveStar();
 });
 
@@ -122,7 +168,7 @@ gameStar.addEventListener("click", function () {
 // Paste your Firebase Realtime Database URL here so every visitor shares one
 // leaderboard, e.g. "https://your-project-default-rtdb.firebaseio.com"
 // Leave it empty to keep scores on this device only.
-const LEADERBOARD_URL = "https://project-blob-blob-blob-default-rtdb.firebaseio.com/";
+const LEADERBOARD_URL = "";
 
 const LOCAL_BOARD_KEY = "starGameLeaderboard";
 const NAME_KEY = "starGamePlayerName";
@@ -256,3 +302,38 @@ scoreForm.addEventListener("submit", async function (event) {
 });
 
 loadLeaderboard();
+
+// 🕴️ STICK MAN: tap him and he runs to another corner
+const stickMan = document.querySelector("#stickMan");
+const stickManArt = stickMan.querySelector("svg");
+const CORNER_GAP = 12;
+const CORNERS = ["bottom-left", "bottom-right", "top-right", "top-left"];
+let stickManCorner = "bottom-left";
+
+function placeStickMan() {
+  const viewWidth = document.documentElement.clientWidth;
+  const viewHeight = window.innerHeight;
+  const right = viewWidth - stickMan.offsetWidth - CORNER_GAP;
+  const bottom = viewHeight - stickMan.offsetHeight - CORNER_GAP;
+
+  const x = stickManCorner.endsWith("right") ? right : CORNER_GAP;
+  const y = stickManCorner.startsWith("bottom") ? bottom : CORNER_GAP;
+
+  stickMan.style.setProperty("--x", x + "px");
+  stickMan.style.setProperty("--y", y + "px");
+}
+
+stickMan.addEventListener("click", function () {
+  const otherCorners = CORNERS.filter(function (corner) {
+    return corner !== stickManCorner;
+  });
+  stickManCorner = otherCorners[Math.floor(Math.random() * otherCorners.length)];
+  placeStickMan();
+
+  stickManArt.classList.remove("hop");
+  void stickManArt.getBoundingClientRect();
+  stickManArt.classList.add("hop");
+});
+
+window.addEventListener("resize", placeStickMan);
+placeStickMan();
