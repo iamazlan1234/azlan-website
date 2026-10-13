@@ -384,6 +384,132 @@ button.bounce {
   color: #fde68a;
 }
 
+/* ♟️ CHESS */
+.chess-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0 8px;
+  color: #a5b4fc;
+}
+
+.chess-controls select {
+  margin-left: 6px;
+  padding: 10px 12px;
+  border: 1px solid #6366f1;
+  border-radius: 10px;
+  background: #11152a;
+  color: #f8fafc;
+  font-size: 15px;
+}
+
+.chess-controls button {
+  padding: 10px 16px;
+  font-size: 15px;
+}
+
+.chess-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chess-status {
+  min-height: 1.5em;
+  margin: 10px 0;
+  color: #c4b5fd;
+  font-weight: bold;
+}
+
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  width: 100%;
+  max-width: 440px;
+  margin: 12px auto 0;
+  border: 3px solid #6366f1;
+  border-radius: 10px;
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+/* Squares are buttons, so undo the big purple button look from above */
+.chess-board .sq {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background-image: none;
+  box-shadow: none;
+  transition: none;
+  font-size: 32px;
+  font-size: 9.5cqw;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chess-board .sq:hover,
+.chess-board .sq:active {
+  transform: none;
+  box-shadow: none;
+}
+
+.chess-board .sq.light { background-color: #dfe3fb; }
+.chess-board .sq.dark { background-color: #7c83c9; }
+
+.chess-board .sq.last {
+  background-image: linear-gradient(#facc1559, #facc1559);
+}
+
+.chess-board .sq.check {
+  background-image: radial-gradient(circle, #ef4444f2 0%, #ef444400 72%);
+}
+
+.chess-board .sq.selected {
+  box-shadow: inset 0 0 0 4px #facc15;
+}
+
+.chess-board .sq.target::after {
+  content: "";
+  position: absolute;
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  background: #facc15cc;
+  pointer-events: none;
+}
+
+.chess-board .sq.target.capture::after {
+  width: 88%;
+  height: 88%;
+  background: transparent;
+  border: 4px solid #facc15e6;
+}
+
+.chess-board .sq:focus-visible {
+  outline: 3px solid #fde68a;
+  outline-offset: -3px;
+}
+
+.piece {
+  pointer-events: none;
+}
+
+.piece.w {
+  color: #ffffff;
+  text-shadow: 0 0 2px #1e1b4b, 0 0 3px #1e1b4b, 0 1px 1px #1e1b4b;
+}
+
+.piece.b {
+  color: #14102e;
+  text-shadow: 0 0 2px #ffffff55;
+}
+
 /* 🕴️ STICK MAN */
 .stickman {
   --x: 12px;

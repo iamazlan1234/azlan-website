@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Azlan's Games</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 
@@ -61,6 +61,27 @@
     </div>
   </section>
 
+  <section class="game-card chess-card">
+    <h2>♟️ Play Chess vs. the Computer</h2>
+    <p>You are White. Tap a piece, then tap where you want it to go.</p>
+
+    <div class="chess-controls">
+      <label>Level
+        <select id="chessLevel">
+          <option value="1">Easy</option>
+          <option value="3" selected>Medium</option>
+          <option value="4">Hard</option>
+        </select>
+      </label>
+      <button id="chessNew" type="button">New Game</button>
+      <button id="chessUndo" type="button">Undo</button>
+      <button id="chessAuto" type="button">🤖 Play a move for me</button>
+    </div>
+
+    <p id="chessStatus" class="chess-status" aria-live="polite">Loading...</p>
+    <div id="chessBoard" class="chess-board" role="group" aria-label="Chess board"></div>
+  </section>
+
   <footer>
     <p><a href="index.html">← Back to the birthday invitation</a></p>
     <p>Made by Azlan 💜</p>
@@ -80,5 +101,6 @@
 
   <script src="config.js?v=1"></script>
   <script src="script.js?v=6"></script>
+  <script src="chess.js?v=1"></script>
 </body>
 </html>
