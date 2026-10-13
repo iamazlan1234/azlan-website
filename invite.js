@@ -3,6 +3,7 @@ const rsvpName = document.querySelector("#rsvpName");
 const rsvpGuests = document.querySelector("#rsvpGuests");
 const guestsRow = document.querySelector("#guestsRow");
 const rsvpNote = document.querySelector("#rsvpNote");
+const rsvpPeanut = document.querySelector("#rsvpPeanut");
 const rsvpWebsite = document.querySelector("#rsvpWebsite");
 const rsvpSubmit = document.querySelector("#rsvpSubmit");
 const rsvpStatus = document.querySelector("#rsvpStatus");
@@ -54,6 +55,7 @@ rsvpForm.addEventListener("submit", async function (event) {
     attending: attending,
     guests: attending === "yes" ? Number(rsvpGuests.value) : 0
   };
+  if (attending === "yes" && rsvpPeanut.checked) reply.peanutAllergy = true;
   const note = rsvpNote.value.trim().slice(0, 200);
   if (note) reply.note = note;
 
