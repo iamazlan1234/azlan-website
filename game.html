@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Azlan's Games</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
@@ -61,6 +61,30 @@
     </div>
   </section>
 
+  <section class="game-card soccer-card">
+    <h2>⚽ Penalty Shootout</h2>
+
+    <div id="soccerPicker">
+      <p>Pick your team! You'll face a random team in a real penalty shootout. Teams take turns: when you shoot, tap where to aim, and when they shoot, tap where your keeper should dive.</p>
+      <p class="soccer-record">🏆 Your shootout wins: <strong id="soccerWins">0</strong></p>
+      <div id="soccerTeams" class="soccer-teams"></div>
+    </div>
+
+    <div id="soccerMatch" hidden>
+      <div id="soccerBoard" class="soccer-board"></div>
+
+      <canvas id="soccerCanvas" class="soccer-canvas" width="400" height="300" tabindex="0"
+        aria-label="Penalty shootout field. Tap or click inside the goal to shoot or dive, or use the arrow keys to aim and Enter to confirm."></canvas>
+
+      <p id="soccerMessage" class="soccer-message" aria-live="polite"></p>
+
+      <div class="soccer-actions">
+        <button id="soccerAgain" type="button" hidden>Play Again</button>
+        <button id="soccerChange" type="button">Change Team</button>
+      </div>
+    </div>
+  </section>
+
   <section class="game-card chess-card">
     <h2>♟️ Play Chess vs. the Computer</h2>
     <p>You are White. Tap a piece, then tap where you want it to go.</p>
@@ -101,6 +125,7 @@
 
   <script src="config.js?v=1"></script>
   <script src="script.js?v=6"></script>
+  <script src="soccer.js?v=3"></script>
   <script src="chess.js?v=1"></script>
 </body>
 </html>
