@@ -384,6 +384,146 @@ button.bounce {
   color: #fde68a;
 }
 
+/* ⚽ SOCCER PENALTY SHOOTOUT */
+.soccer-note {
+  color: #a5b4fc;
+  font-size: 14px;
+}
+
+.soccer-record {
+  color: #a5b4fc;
+}
+
+.soccer-teams {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* Team buttons: undo the big purple button look */
+.soccer-card .team-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px;
+  border: 1px solid #4f46e5;
+  border-radius: 14px;
+  background: #11152a;
+  box-shadow: none;
+  color: #f8fafc;
+  font-size: 15px;
+}
+
+.soccer-card .team-btn:hover {
+  transform: scale(1.04);
+  background: #1b2040;
+  box-shadow: 0 0 18px #6366f155;
+}
+
+.crest {
+  display: inline-block;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #ffffffcc;
+  border-radius: 50%;
+}
+
+.crest.big {
+  width: 44px;
+  height: 44px;
+}
+
+.soccer-board {
+  margin: 14px auto 12px;
+  max-width: 480px;
+}
+
+.soccer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border: 1px solid #312e81;
+  border-radius: 12px;
+  background: #11152a;
+  text-align: left;
+}
+
+.soccer-row.active {
+  border-color: #facc15;
+  box-shadow: 0 0 14px #facc1544;
+}
+
+.soccer-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: bold;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.soccer-dots {
+  font-size: 14px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.soccer-score {
+  min-width: 1.4em;
+  color: #fde047;
+  font-size: 24px;
+  text-align: right;
+}
+
+.soccer-canvas {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+  border: 3px solid #16a34a;
+  border-radius: 14px;
+  background: #15803d;
+  cursor: crosshair;
+  touch-action: manipulation;
+}
+
+.soccer-canvas:focus-visible {
+  outline: 3px solid #fde68a;
+  outline-offset: 3px;
+}
+
+.soccer-message {
+  min-height: 3em;
+  margin: 12px 0;
+  color: #c4b5fd;
+  font-weight: bold;
+}
+
+.soccer-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.soccer-actions button {
+  padding: 10px 18px;
+  font-size: 15px;
+}
+
+@media (max-width: 480px) {
+  .soccer-dots {
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+}
+
 /* ♟️ CHESS */
 .chess-controls {
   display: flex;

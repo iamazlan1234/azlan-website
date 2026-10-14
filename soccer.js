@@ -4,38 +4,50 @@
 
   // ---------- The teams (rename or recolour them here) ----------
   // shirt/trim = team colours, gk = goalkeeper kit colour,
-  // players = the order they take penalties in, keeper = the goalkeeper
+  // players = the order they take penalties in, keeper = the goalkeeper,
+  // newSignings = players who joined in the summer 2026 transfer window
+  // (squads as of October 2026)
   const TEAMS = [
     { name: "Manchester Red", shirt: "#dc2626", trim: "#ffffff", gk: "#22c55e",
-      players: ["Bruno Fernandos", "Marcus Rashfurd", "Kobbie Maino", "Rasmus Hoylund", "Alejandro Garnachoo"],
-      keeper: "Andre Onanah" },
+      players: ["Bruno Fernandes", "Bryan Mbeumo", "Matheus Cunha", "Benjamin Šeško", "Andrey Santos"],
+      newSignings: ["Andrey Santos"],
+      keeper: "Senne Lammens" },
     { name: "Manchester Blue", shirt: "#38bdf8", trim: "#ffffff", gk: "#f97316",
-      players: ["Erling Haalund", "Phil Fodin", "Kevin De Bruin", "Rodrio Hernandes", "Bernardo Silvo"],
-      keeper: "Edersson Moraez" },
+      players: ["Erling Haaland", "Phil Foden", "Enzo Fernández", "Elliot Anderson", "Iliman Ndiaye"],
+      newSignings: ["Enzo Fernández", "Elliot Anderson", "Iliman Ndiaye"],
+      keeper: "Gianluigi Donnarumma" },
     { name: "FC Barkalona", shirt: "#1d4ed8", trim: "#b91c1c", gk: "#facc15", stripes: true,
-      players: ["Lamin Amal", "Robert Lewandowsky", "Pedrii Gonzalez", "Raphinya Dias", "Frenkie De Jongh"],
-      keeper: "Marc ter Stegan" },
+      players: ["Lamine Yamal", "Raphinha", "Pedri", "Anthony Gordon", "Rodri"],
+      newSignings: ["Anthony Gordon", "Rodri"],
+      keeper: "Joan García" },
     { name: "Madrid White", shirt: "#f8fafc", trim: "#facc15", gk: "#a855f7",
-      players: ["Kylian Mbappay", "Vinny Junior", "Jude Bellingam", "Rodrigo Goes", "Federico Valverdi"],
-      keeper: "Thibaut Courtoys" },
+      players: ["Kylian Mbappé", "Vinícius Júnior", "Jude Bellingham", "Yan Diomande", "Bernardo Silva"],
+      newSignings: ["Yan Diomande", "Bernardo Silva"],
+      keeper: "Thibaut Courtois" },
     { name: "Paris", shirt: "#1e3a8a", trim: "#dc2626", gk: "#22d3ee",
-      players: ["Ousmane Dembellay", "Bradley Barcolla", "Vitinho Ferreira", "Achraf Hakimy", "Marquino Correa"],
-      keeper: "Gianluigi Donnarumba" },
+      players: ["Ousmane Dembélé", "Khvicha Kvaratskhelia", "Désiré Doué", "Ferran Torres", "Maghnes Akliouche"],
+      newSignings: ["Ferran Torres", "Maghnes Akliouche"],
+      keeper: "Lucas Chevalier" },
     { name: "Inter", shirt: "#1d4ed8", trim: "#0f172a", gk: "#f97316", stripes: true,
-      players: ["Lautaro Martinaz", "Nicolo Barelli", "Hakan Calhanolu", "Marcus Thurman", "Federico Dimarko"],
-      keeper: "Yann Sommar" },
+      players: ["Lautaro Martínez", "Marcus Thuram", "Hakan Çalhanoğlu", "Curtis Jones", "John Stones"],
+      newSignings: ["Curtis Jones", "John Stones"],
+      keeper: "Josep Martínez" },
     { name: "Liverp", shirt: "#b91c1c", trim: "#fde047", gk: "#14b8a6",
-      players: ["Mo Salaah", "Virgil van Dyke", "Cody Gakpoh", "Darwin Nunes", "Trent Alexander-Arnald"],
-      keeper: "Alisson Baker" },
+      players: ["Florian Wirtz", "Alexander Isak", "Dominik Szoboszlai", "Cody Gakpo", "Jérémy Jacquet"],
+      newSignings: ["Jérémy Jacquet"],
+      keeper: "Alisson Becker" },
     { name: "Bay. Munich", shirt: "#dc2626", trim: "#1e3a8a", gk: "#84cc16",
-      players: ["Harry Cane", "Jamal Musiyala", "Joshua Kimmick", "Leroy Sanay", "Michael Olisay"],
-      keeper: "Manuel Noyer" },
+      players: ["Harry Kane", "Michael Olise", "Luis Díaz", "Ismael Saibari", "Nathaniel Brown"],
+      newSignings: ["Ismael Saibari", "Nathaniel Brown"],
+      keeper: "Manuel Neuer" },
     { name: "Arson", shirt: "#ef4444", trim: "#ffffff", gk: "#6366f1",
-      players: ["Bukayo Sakka", "Martin Odegard", "Declan Rise", "Gabriel Jesuz", "Kai Havertzz"],
-      keeper: "David Rayah" },
+      players: ["Bukayo Saka", "Martin Ødegaard", "Viktor Gyökeres", "Bruno Guimarães", "Piero Hincapié"],
+      newSignings: ["Bruno Guimarães", "Piero Hincapié"],
+      keeper: "David Raya" },
     { name: "Juve Stripes", shirt: "#ffffff", trim: "#111827", gk: "#ec4899", stripes: true,
-      players: ["Dusan Vlahovik", "Kenan Yildizz", "Weston McKenny", "Federico Chiessa", "Manuel Locatelly"],
-      keeper: "Michele Di Gregoria" }
+      players: ["Kenan Yıldız", "Teun Koopmeiners", "Weston McKennie", "Manuel Locatelli", "Jhon Lucumí"],
+      newSignings: ["Jhon Lucumí"],
+      keeper: "Guglielmo Vicario" }
   ];
 
   const KICKS = 5; // kicks each before sudden death
@@ -101,6 +113,7 @@
   let goalieTarget = { x: 200, y: 90 };
   let outcome = "";
   let kicker = "";
+  let kickerIsNew = false;
   let startTime = 0;
   let resultTime = 0;
   let waitUntil = 0;
@@ -223,13 +236,15 @@
 
     const team = teamOf(shooter);
     kicker = team.players[taken[shooter] % team.players.length];
+    kickerIsNew = team.newSignings.indexOf(kicker) !== -1;
+    const who = kicker + (kickerIsNew ? " (new signing ★)" : "");
 
     if (shooter === "you") {
       mode = "aim";
-      say(prefix + kicker + " steps up for " + team.name + ". Tap where you want to shoot.");
+      say(prefix + who + " steps up for " + team.name + ". Tap where you want to shoot.");
     } else {
       mode = "dive";
-      say(prefix + kicker + " steps up for " + team.name + ". Tap where " + you.keeper + " should dive 🧤");
+      say(prefix + who + " steps up for " + team.name + ". Tap where " + you.keeper + " should dive 🧤");
     }
     renderBoard();
   }
@@ -495,9 +510,10 @@
       ctx.lineWidth = 4;
       ctx.lineJoin = "round";
       ctx.strokeStyle = "#0b1020";
-      ctx.strokeText(kicker, x, y - 44);
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(kicker, x, y - 44);
+      const tag = kicker + (kickerIsNew ? " ★" : "");
+      ctx.strokeText(tag, x, y - 44);
+      ctx.fillStyle = kickerIsNew ? "#fde047" : "#ffffff";
+      ctx.fillText(tag, x, y - 44);
     }
   }
 
