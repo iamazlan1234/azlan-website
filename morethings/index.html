@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Azlan's More Things</title>
   <link rel="stylesheet" href="../style.css?v=10">
-  <link rel="stylesheet" href="more.css?v=3">
+  <link rel="stylesheet" href="more.css?v=4">
 </head>
 <body>
 
@@ -53,6 +53,32 @@
     <p id="craftMsg" class="more-message" aria-live="polite">Pick any two items!</p>
     <div id="craftPantry" class="craft-pantry" role="group" aria-label="Your items"></div>
     <button id="craftReset" type="button" class="small-btn">Reset my items</button>
+
+    <form id="crForm" class="fb-form" hidden>
+      <label for="crName">You've found <span id="crCount">0</span> items! Enter your name for the leaderboard:</label>
+      <div class="inline-row">
+        <input id="crName" type="text" maxlength="20" placeholder="Your name" autocomplete="nickname">
+        <button id="crSubmit" type="submit">Save score</button>
+      </div>
+      <p id="crFormStatus" class="more-message" aria-live="polite"></p>
+    </form>
+
+    <h3>🏆 Infinite Craft Leaderboard</h3>
+    <p id="crBoardStatus" class="more-message">Loading…</p>
+    <ol id="crBoard" class="leader-list"></ol>
+
+    <div id="craftSaveBox" class="fb-form" hidden>
+      <label for="craftName">Save your score (items found) to the leaderboard:</label>
+      <div class="inline-row">
+        <input id="craftName" type="text" maxlength="20" placeholder="Your name" autocomplete="nickname">
+        <button id="craftSave" type="button">Save my score</button>
+      </div>
+      <p id="craftSaveStatus" class="more-message" aria-live="polite"></p>
+    </div>
+
+    <h3>🏆 Infinite Craft Leaderboard</h3>
+    <p id="craftBoardStatus" class="more-message">Loading…</p>
+    <ol id="craftBoard" class="leader-list"></ol>
   </section>
 
   <!-- 🏀 BASKETBALL -->
@@ -90,7 +116,7 @@
   <!-- 🏒 PUPPET HOCKEY -->
   <section class="game-card">
     <h2>🏒 Puppet Hockey</h2>
-    <p>Our own air-hockey style game. Move your puppet 🎭 at the bottom with your mouse or finger, or the arrow keys. Shoot the puck into the 🤖 goal on the right. You have 60 seconds!</p>
+    <p>Our own 2D hockey game. Skate with <strong>W A S D</strong> or the arrow keys, and press <strong>F</strong> to shoot when the puck is on your stick. You can also click or tap to shoot. Score in the 🤖 goal on the right. You have 60 seconds!</p>
 
     <div class="game-stats">
       <span>🎭 You: <strong id="hkYou">0</strong></span>
@@ -99,7 +125,7 @@
     </div>
 
     <canvas id="hockeyCanvas" class="more-canvas" width="400" height="300"
-      tabindex="0" aria-label="Puppet hockey. Move your puppet with the mouse, finger, or arrow keys to score."></canvas>
+      tabindex="0" aria-label="Puppet hockey. Use WASD or arrow keys to skate and F to shoot."></canvas>
 
     <p id="hkMessage" class="more-message" aria-live="polite">Press Start to play!</p>
     <button id="hkStart" type="button">Start Game</button>
@@ -125,9 +151,9 @@
   </footer>
 
   <script src="../config.js?v=1"></script>
-  <script src="more.js?v=3"></script>
-  <script src="craft.js?v=1"></script>
+  <script src="more.js?v=4"></script>
+  <script src="craft.js?v=2"></script>
   <script src="basketball.js?v=2"></script>
-  <script src="hockey.js?v=1"></script>
+  <script src="hockey.js?v=2"></script>
 </body>
 </html>

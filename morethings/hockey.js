@@ -1,17 +1,21 @@
-// 🏒 PUPPET HOCKEY: an air-hockey style game with a shared leaderboard.
+// 🏒 PUPPET HOCKEY: an original 2D hockey game with cartoon players.
+// Controls: WASD or arrow keys to skate, F to shoot the puck (or click/tap to shoot).
 (function () {
   "use strict";
 
   const FB = (typeof FIREBASE_URL === "string" && FIREBASE_URL) ? FIREBASE_URL.replace(/\/$/, "") : "";
   const W = 400;
   const H = 300;
-  const PUCK_R = 9;
-  const PAD_R = 22;
-  const GOAL_TOP = 105;
-  const GOAL_BOTTOM = 195;
+  const PUCK_R = 7;
+  const BODY_R = 14;
+  const STICK = 30;
+  const GOAL_TOP = 110;
+  const GOAL_BOTTOM = 190;
   const MATCH_SECONDS = 60;
-  const AI_SPEED = 190;
-  const PLAYER_SPEED = 900;
+  const PLAYER_SPEED = 240;
+  const AI_SPEED = 175;
+  const SHOT_SPEED = 640;
+  const SHOT_COOLDOWN = 0.35;
 
   const canvas = document.querySelector("#hockeyCanvas");
   if (!canvas) return;
@@ -35,7 +39,8 @@
   const boardStatus = document.querySelector("#hkBoardStatus");
   const boardList = document.querySelector("#hkBoard");
 
-  let puck, player, ai, target, running, timeLeft, youGoals, aiGoals, flash, flashTime, scored;
+  let puck, you, cpu, running, timeLeft, youGoals, aiGoals, flash, flashTime, keys, shotCooldown, lastShot;
+  let last = 0;
 
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
@@ -47,48 +52,115 @@
     };
   }
 
-  function servePuck(towardPlayer) {
+  function makeSkater(x, y, facingY) {
+    return { x: x, y: y, vx: 0, vy: 0, fx: 0, fy: facingY, swing: 0 };
+  }
+
+  function servePuck(towardYou) {
     puck = {
       x: W / 2,
       y: H / 2,
-      vx: (towardPlayer ? 1 : -1) * (130 + Math.random() * 50),
-      vy: (Math.random() - 0.5) * 120
+      vx: (towardYou ? 1 : -1) * (120 + Math.random() * 40),
+      vy: (Math.random() - 0.5) * 100
     };
   }
 
-  function bounceOff(p) {
-    const dx = puck.x - p.x;
-    const dy = puck.y - p.y;
+  function tipOf(s) {
+    return { x: s.x + s.fx * STICK, y: s.y + s.fy * STICK };
+  }
+
+  // Bodies push the puck away
+  function bodyHit(s) {
+    const dx = puck.x - s.x;
+    const dy = puck.y - s.y;
     const d = Math.hypot(dx, dy);
-    const min = PUCK_R + PAD_R;
+    const min = PUCK_R + BODY_R;
     if (d >= min || d === 0) return;
     const nx = dx / d;
     const ny = dy / d;
-    puck.x = p.x + nx * min;
-    puck.y = p.y + ny * min;
-    const rvx = puck.vx - p.vx;
-    const rvy = puck.vy - p.vy;
+    puck.x = s.x + nx * min;
+    puck.y = s.y + ny * min;
+    const rvx = puck.vx - s.vx;
+    const rvy = puck.vy - s.vy;
     const vn = rvx * nx + rvy * ny;
     if (vn < 0) {
-      puck.vx -= 1.9 * vn * nx;
-      puck.vy -= 1.9 * vn * ny;
+      puck.vx -= 1.6 * vn * nx;
+      puck.vy -= 1.6 * vn * ny;
     }
-    const speed = Math.hypot(puck.vx, puck.vy);
-    if (speed > 900) {
-      puck.vx = puck.vx / speed * 900;
-      puck.vy = puck.vy / speed * 900;
-    }
+  }
+
+  // Shooting: the puck must be close to the stick blade
+  function shoot(s, speed) {
+    const tip = tipOf(s);
+    const d = Math.hypot(puck.x - tip.x, puck.y - tip.y);
+    s.swing = 0.25;
+    if (d > PUCK_R + 14) return false;
+    const len = Math.hypot(s.fx, s.fy) || 1;
+    puck.vx = (s.fx / len) * speed + s.vx * 0.4;
+    puck.vy = (s.fy / len) * speed + s.vy * 0.4;
+    puck.x = tip.x + (s.fx / len) * (PUCK_R + 2);
+    puck.y = tip.y + (s.fy / len) * (PUCK_R + 2);
+    return true;
   }
 
   function showFlash(text) {
     flash = text;
-    flashTime = 1.2;
+    flashTime = 1.1;
   }
 
   function updateHud() {
     youEl.textContent = youGoals;
     aiEl.textContent = aiGoals;
     timeEl.textContent = Math.max(0, Math.ceil(timeLeft));
+  }
+
+  function movePlayer(dt) {
+    let dx = 0;
+    let dy = 0;
+    if (keys.KeyA || keys.ArrowLeft) dx -= 1;
+    if (keys.KeyD || keys.ArrowRight) dx += 1;
+    if (keys.KeyW || keys.ArrowUp) dy -= 1;
+    if (keys.KeyS || keys.ArrowDown) dy += 1;
+    const len = Math.hypot(dx, dy);
+    const vx = len ? (dx / len) * PLAYER_SPEED : 0;
+    const vy = len ? (dy / len) * PLAYER_SPEED : 0;
+    you.vx = vx;
+    you.vy = vy;
+    you.x = clamp(you.x + vx * dt, BODY_R, W - BODY_R);
+    you.y = clamp(you.y + vy * dt, H / 2 + BODY_R, H - BODY_R);
+    if (len) {
+      you.fx = dx / len;
+      you.fy = dy / len;
+    }
+    you.swing = Math.max(0, you.swing - dt);
+  }
+
+  function moveCpu(dt) {
+    // Chase the puck when it's in its half, otherwise guard the goal
+    const tx = clamp(puck.x, BODY_R, W - BODY_R);
+    const ty = clamp(puck.y < H / 2 ? puck.y : H * 0.22, BODY_R, H / 2 - BODY_R);
+    const prevX = cpu.x;
+    const prevY = cpu.y;
+    const sp = AI_SPEED * dt;
+    cpu.x += clamp(tx - cpu.x, -sp, sp);
+    cpu.y += clamp(ty - cpu.y, -sp, sp);
+    cpu.vx = (cpu.x - prevX) / dt;
+    cpu.vy = (cpu.y - prevY) / dt;
+    // Face the puck, and take a shot when it's in range
+    const ax = puck.x - cpu.x;
+    const ay = puck.y - cpu.y;
+    const alen = Math.hypot(ax, ay) || 1;
+    cpu.fx = ax / alen;
+    cpu.fy = ay / alen;
+    cpu.swing = Math.max(0, cpu.swing - dt);
+    shotCooldown -= dt;
+    const tip = tipOf(cpu);
+    if (shotCooldown <= 0 && Math.hypot(puck.x - tip.x, puck.y - tip.y) < PUCK_R + 14 && puck.y < H / 2 + 40) {
+      if (Math.random() < 0.6) {
+        shoot(cpu, 420 + Math.random() * 120);
+        shotCooldown = 0.9;
+      }
+    }
   }
 
   function step(dt) {
@@ -100,55 +172,37 @@
       return;
     }
 
-    // Your puppet follows the pointer (bottom half only)
-    const prevPlayer = { x: player.x, y: player.y };
-    if (target) {
-      const tx = clamp(target.x, PAD_R, W - PAD_R);
-      const ty = clamp(target.y, H / 2 + PAD_R, H - PAD_R);
-      const sp = PLAYER_SPEED * dt;
-      player.x += clamp(tx - player.x, -sp, sp);
-      player.y += clamp(ty - player.y, -sp, sp);
-    }
-    player.vx = (player.x - prevPlayer.x) / dt;
-    player.vy = (player.y - prevPlayer.y) / dt;
+    movePlayer(dt);
+    moveCpu(dt);
 
-    // Computer puppet chases the puck in the top half
-    const prevAi = { x: ai.x, y: ai.y };
-    const aiTx = clamp(puck.x, PAD_R, W - PAD_R);
-    const aiTy = clamp(puck.y < H / 2 ? puck.y : H * 0.25, PAD_R, H / 2 - PAD_R);
-    const asp = AI_SPEED * dt;
-    ai.x += clamp(aiTx - ai.x, -asp, asp);
-    ai.y += clamp(aiTy - ai.y, -asp, asp);
-    ai.vx = (ai.x - prevAi.x) / dt;
-    ai.vy = (ai.y - prevAi.y) / dt;
+    shotCooldown -= 0; // cooldown for you is handled on F press
 
     // Puck movement with a little friction
-    const friction = Math.pow(0.992, dt * 60);
+    const friction = Math.pow(0.99, dt * 60);
     puck.vx *= friction;
     puck.vy *= friction;
     puck.x += puck.vx * dt;
     puck.y += puck.vy * dt;
 
-    bounceOff(player);
-    bounceOff(ai);
+    bodyHit(you);
+    bodyHit(cpu);
 
-    // Top and bottom walls
+    // Top and bottom boards
     if (puck.y < PUCK_R) { puck.y = PUCK_R; puck.vy = Math.abs(puck.vy) * 0.9; }
     if (puck.y > H - PUCK_R) { puck.y = H - PUCK_R; puck.vy = -Math.abs(puck.vy) * 0.9; }
 
-    // Side walls, with goal mouths
+    // Side boards, with the goal openings
     const inMouth = puck.y > GOAL_TOP && puck.y < GOAL_BOTTOM;
     if (puck.x > W - PUCK_R && !inMouth) { puck.x = W - PUCK_R; puck.vx = -Math.abs(puck.vx) * 0.9; }
     if (puck.x < PUCK_R && !inMouth) { puck.x = PUCK_R; puck.vx = Math.abs(puck.vx) * 0.9; }
 
-    // You score into the right goal, the computer into the left
     if (puck.x > W + PUCK_R) {
       youGoals++;
-      showFlash("⚽ GOAL! You scored!");
+      showFlash("🚨 GOAL! Nice shot!");
       servePuck(false);
     } else if (puck.x < -PUCK_R) {
       aiGoals++;
-      showFlash("🤖 The computer scores!");
+      showFlash("😬 The computer scores");
       servePuck(true);
     }
 
@@ -157,70 +211,137 @@
     updateHud();
   }
 
-  function drawPuppet(x, y, color, face) {
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x, y, PAD_R, 0, Math.PI * 2);
+  // ---------- drawing ----------
+  function drawRink() {
+    // ice
+    ctx.fillStyle = "#e0f2fe";
+    roundRect(0, 0, W, H, 18);
     ctx.fill();
-    ctx.strokeStyle = "#ffffffcc";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.font = "22px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "#000";
-    ctx.fillText(face, x, y + 1);
-  }
 
-  function draw() {
-    // Ice
-    const ice = ctx.createLinearGradient(0, 0, W, H);
-    ice.addColorStop(0, "#e0f2fe");
-    ice.addColorStop(1, "#bae6fd");
-    ctx.fillStyle = ice;
-    ctx.fillRect(0, 0, W, H);
+    // center and blue lines
+    ctx.fillStyle = "#dc2626aa";
+    ctx.fillRect(W / 2 - 2, 0, 4, H);
+    ctx.fillStyle = "#2563ebaa";
+    ctx.fillRect(W * 0.3, 0, 4, H);
+    ctx.fillRect(W * 0.7 - 4, 0, 4, H);
 
-    // Lines
-    ctx.strokeStyle = "#ef4444aa";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(W / 2, 0);
-    ctx.lineTo(W / 2, H);
-    ctx.stroke();
-    ctx.strokeStyle = "#38bdf8aa";
+    // center circle and face-off dots
+    ctx.strokeStyle = "#dc2626aa";
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(W / 2, H / 2, 40, 0, Math.PI * 2);
     ctx.stroke();
+    ctx.fillStyle = "#dc2626aa";
+    ctx.beginPath(); ctx.arc(W / 2, H / 2, 4, 0, Math.PI * 2); ctx.fill();
 
-    // Goals (left belongs to the computer, right to you)
-    ctx.fillStyle = "#dc2626";
-    ctx.fillRect(W - 6, GOAL_TOP, 6, GOAL_BOTTOM - GOAL_TOP);
-    ctx.fillStyle = "#2563eb";
-    ctx.fillRect(0, GOAL_TOP, 6, GOAL_BOTTOM - GOAL_TOP);
+    // goal crease areas
+    ctx.strokeStyle = "#2563ebaa";
+    ctx.beginPath(); ctx.arc(0, H / 2, 50, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(W, H / 2, 50, Math.PI / 2, Math.PI * 1.5); ctx.stroke();
 
-    // Walls
+    // goals
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(0, GOAL_TOP, 7, GOAL_BOTTOM - GOAL_TOP);
+    ctx.fillRect(W - 7, GOAL_TOP, 7, GOAL_BOTTOM - GOAL_TOP);
+    ctx.fillStyle = "#f8fafc";
+    for (let y = GOAL_TOP + 6; y < GOAL_BOTTOM; y += 8) {
+      ctx.fillRect(0, y, 7, 1);
+      ctx.fillRect(W - 7, y, 7, 1);
+    }
+
+    // boards (the rink walls)
     ctx.strokeStyle = "#0f172a";
+    ctx.lineWidth = 6;
+    roundRect(3, 3, W - 6, H - 6, 18);
+    ctx.stroke();
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+    else ctx.rect(x, y, w, h);
+  }
+
+  // A cartoon skater: helmet, face, jersey with a number, and a stick
+  function drawSkater(s, jersey, number, label) {
+    const tip = tipOf(s);
+    // shadow
+    ctx.fillStyle = "#0f172a33";
+    ctx.beginPath();
+    ctx.ellipse(s.x + 2, s.y + 6, BODY_R, BODY_R * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // stick (from the hands to the blade)
+    const swing = s.swing > 0 ? 6 : 0;
+    ctx.strokeStyle = "#78350f";
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(s.x - s.fy * 6, s.y + s.fx * 6);
+    ctx.lineTo(tip.x + s.fy * swing, tip.y - s.fx * swing);
+    ctx.stroke();
+    ctx.strokeStyle = "#111827";
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.moveTo(0, 0); ctx.lineTo(W, 0); ctx.lineTo(W, GOAL_TOP);
-    ctx.moveTo(W, GOAL_BOTTOM); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.lineTo(0, GOAL_BOTTOM);
-    ctx.moveTo(0, GOAL_TOP); ctx.lineTo(0, 0);
+    ctx.moveTo(tip.x - s.fy * 3, tip.y + s.fx * 3);
+    ctx.lineTo(tip.x + s.fy * 5 + s.fx * 3, tip.y - s.fx * 5 + s.fy * 3);
     ctx.stroke();
 
-    // Puck
+    // body: jersey
+    ctx.fillStyle = jersey;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, BODY_R, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#0f172a";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // number
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 11px Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(number, s.x, s.y + 1);
+
+    // helmet/head on top
+    ctx.fillStyle = "#f5d0a9";
+    ctx.beginPath();
+    ctx.arc(s.x + s.fx * 3, s.y - 2 + s.fy * 3, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#1f2937";
+    ctx.beginPath();
+    ctx.arc(s.x + s.fx * 3, s.y - 3 + s.fy * 3, 7.5, Math.PI, 0);
+    ctx.fill();
+
+    // name tag
+    ctx.font = "bold 10px Arial, sans-serif";
+    ctx.fillStyle = "#0f172a";
+    ctx.fillText(label, s.x, s.y - BODY_R - 8);
+  }
+
+  function drawPuck() {
+    ctx.fillStyle = "#0f172a55";
+    ctx.beginPath();
+    ctx.ellipse(puck.x + 2, puck.y + 3, PUCK_R, PUCK_R * 0.6, 0, 0, Math.PI * 2);
+    ctx.fill();
     ctx.fillStyle = "#111827";
     ctx.beginPath();
     ctx.arc(puck.x, puck.y, PUCK_R, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "#f8fafc";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#e5e7eb";
+    ctx.lineWidth = 1.5;
     ctx.stroke();
+  }
 
-    drawPuppet(ai.x, ai.y, "#ef4444", "🤖");
-    drawPuppet(player.x, player.y, "#22c55e", "🎭");
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawRink();
+    drawSkater(cpu, "#ef4444", "1", "CPU");
+    drawSkater(you, "#22c55e", "10", "YOU");
+    drawPuck();
 
     if (flash) {
-      ctx.font = "bold 24px Arial, sans-serif";
+      ctx.font = "bold 22px Arial, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.lineWidth = 5;
@@ -230,9 +351,14 @@
       ctx.fillStyle = "#fde047";
       ctx.fillText(flash, W / 2, H / 2 - 60);
     }
+    if (!running && !(youGoals || aiGoals)) {
+      ctx.font = "bold 18px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#0f172a";
+      ctx.fillText("Press Start Game", W / 2, H / 2 + 60);
+    }
   }
 
-  let last = 0;
   function frame(now) {
     const dt = Math.min(0.033, (now - last) / 1000 || 0.016);
     last = now;
@@ -243,13 +369,13 @@
 
   function finish() {
     running = false;
-    target = null;
+    keys = {};
     startBtn.hidden = false;
     startBtn.textContent = "Play Again";
     message.textContent = "🏁 Full time! You " + youGoals + " – " + aiGoals + " computer.";
     if (youGoals > 0) {
       youScoreEl.textContent = youGoals;
-      nameIn.value = (function () { try { return localStorage.getItem("hkName") || ""; } catch (e) { return ""; } })();
+      try { nameIn.value = localStorage.getItem("hkName") || ""; } catch (e) { nameIn.value = ""; }
       formStatus.textContent = "";
       submitBtn.disabled = false;
       formBox.hidden = false;
@@ -326,46 +452,68 @@
     }
   });
 
-  canvas.addEventListener("pointerdown", function (event) {
+  // ---------- controls ----------
+  const GAME_KEYS = ["KeyW", "KeyA", "KeyS", "KeyD", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+
+  window.addEventListener("keydown", function (event) {
     if (!running) return;
-    target = toCanvas(event);
-    event.preventDefault();
-  });
-  canvas.addEventListener("pointermove", function (event) {
-    if (!running) return;
-    if (event.pointerType === "mouse" || event.buttons) target = toCanvas(event);
+    if (GAME_KEYS.indexOf(event.code) !== -1) {
+      event.preventDefault();
+      keys[event.code] = true;
+    }
+    if (event.code === "KeyF" && !event.repeat && shotCooldown <= 0) {
+      event.preventDefault();
+      shotCooldown = SHOT_COOLDOWN;
+      if (shoot(you, SHOT_SPEED)) showFlash("🏒 Shot!");
+    }
   });
 
-  // Arrow keys nudge the puppet
-  canvas.addEventListener("keydown", function (event) {
-    const moves = { ArrowLeft: [-30, 0], ArrowRight: [30, 0], ArrowUp: [0, -30], ArrowDown: [0, 30] };
-    if (!running || !moves[event.key]) return;
-    event.preventDefault();
-    target = { x: player.x + moves[event.key][0], y: player.y + moves[event.key][1] };
+  window.addEventListener("keyup", function (event) {
+    keys[event.code] = false;
+  });
+
+  canvas.addEventListener("pointerdown", function (event) {
+    if (!running || shotCooldown > 0) return;
+    // Click or tap: aim toward the pointer, then shoot
+    const p = toCanvas(event);
+    const dx = p.x - you.x;
+    const dy = p.y - you.y;
+    const len = Math.hypot(dx, dy) || 1;
+    you.fx = dx / len;
+    you.fy = dy / len;
+    shotCooldown = SHOT_COOLDOWN;
+    if (shoot(you, SHOT_SPEED)) showFlash("🏒 Shot!");
   });
 
   startBtn.addEventListener("click", function () {
-    player = { x: W / 2, y: H - 40, vx: 0, vy: 0 };
-    ai = { x: W / 2, y: 40, vx: 0, vy: 0 };
-    target = null;
+    you = makeSkater(W / 2, H - 45, 0);
+    you.fy = -1;
+    cpu = makeSkater(W / 2, 45, 0);
+    cpu.fy = 1;
+    keys = {};
     youGoals = 0;
     aiGoals = 0;
     timeLeft = MATCH_SECONDS;
     flash = "";
+    shotCooldown = 0;
     formBox.hidden = true;
     servePuck(Math.random() < 0.5);
     running = true;
     startBtn.hidden = true;
-    message.textContent = "Go! Shoot the puck into the 🤖 goal on the right!";
+    message.textContent = "Go! WASD or arrows to skate, F to shoot!";
     updateHud();
   });
 
-  player = { x: W / 2, y: H - 40, vx: 0, vy: 0 };
-  ai = { x: W / 2, y: 40, vx: 0, vy: 0 };
+  keys = {};
+  you = makeSkater(W / 2, H - 45, 0);
+  you.fy = -1;
+  cpu = makeSkater(W / 2, 45, 0);
+  cpu.fy = 1;
   puck = { x: W / 2, y: H / 2, vx: 0, vy: 0 };
   youGoals = 0;
   aiGoals = 0;
   timeLeft = MATCH_SECONDS;
+  shotCooldown = 0;
   updateHud();
   loadBoard();
   requestAnimationFrame(frame);

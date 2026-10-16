@@ -1,16 +1,37 @@
-// 🧪 INFINITE CRAFT: combine items to discover new ones.
+// 🧪 INFINITE CRAFT: combine items to discover new ones. Hidden items are secret.
 (function () {
   "use strict";
 
   const ELEMENTS = {
-    Water: "💧", Fire: "🔥", Earth: "🌍", Air: "💨", Steam: "♨️", Mud: "🟤", Lava: "🌋",
-    Dust: "🌫️", Energy: "⚡", Rain: "🌧️", Cloud: "☁️", Plant: "🌱", Tree: "🌳", Flower: "🌸",
-    Wood: "🪵", Charcoal: "⚫", Stone: "🪨", Sand: "🏖️", Glass: "🪟", Storm: "⛈️", Lightning: "🌩️",
-    Ocean: "🌊", Life: "🦠", Animal: "🐾", Bird: "🐦", Fish: "🐟", Dinosaur: "🦖", Human: "🧑",
-    Metal: "⚙️", Robot: "🤖", Rocket: "🚀", House: "🏠", Village: "🏘️", City: "🏙️", Snow: "❄️",
-    Ice: "🧊", Snowman: "⛄", Sky: "🌤️", Sun: "☀️", Moon: "🌙", Star: "⭐", Galaxy: "🌌", Game: "🎮",
-    Party: "🎉", Cake: "🎂", Birthday: "🥳", Diamond: "💎", Gold: "🥇", Crown: "👑", Magic: "✨", Dragon: "🐉"
+    // starting items
+    Water: "💧", Fire: "🔥", Earth: "🌍", Air: "💨",
+    // first discoveries
+    Steam: "♨️", Mud: "🟤", Lava: "🌋", Dust: "🌫️", Energy: "⚡", Rain: "🌧️", Cloud: "☁️",
+    Plant: "🌱", Tree: "🌳", Flower: "🌸", Wood: "🪵", Charcoal: "⚫", Stone: "🪨", Sand: "🏖️",
+    Glass: "🪟", Storm: "⛈️", Lightning: "🌩️", Ocean: "🌊", Life: "🦠", Animal: "🐾", Bird: "🐦",
+    Fish: "🐟", Dinosaur: "🦖", Human: "🧑", Metal: "⚙️", Robot: "🤖", Rocket: "🚀", House: "🏠",
+    Village: "🏘️", City: "🏙️", Snow: "❄️", Ice: "🧊", Snowman: "⛄", Sky: "🌤️", Sun: "☀️",
+    Moon: "🌙", Star: "⭐", Galaxy: "🌌", Game: "🎮", Party: "🎉", Cake: "🎂", Birthday: "🥳",
+    Diamond: "💎", Gold: "🥇", Crown: "👑", Magic: "✨", Dragon: "🐉",
+    // more items
+    Computer: "💻", Internet: "🌐", Phone: "📱", Sound: "🔊", Music: "🎵", Paper: "📄", Book: "📚",
+    School: "🏫", Teacher: "🧑‍🏫", Ball: "⚽", Soccer: "🥅", Trophy: "🏆", Rainbow: "🌈", Island: "🏝️",
+    Beach: "🌅", Boat: "⛵", Ship: "🚢", Plane: "✈️", Tornado: "🌪️", Forest: "🌲", Garden: "🌷",
+    Bee: "🐝", Honey: "🍯", Apple: "🍎", Bread: "🍞", Wheat: "🌾", Milk: "🥛", Cheese: "🧀",
+    Pizza: "🍕", Sandwich: "🥪", Sugar: "🍬", Cookie: "🍪", Ice_Cream: "🍦", Pie: "🥧", Cacao: "🫘",
+    Chocolate: "🍫", Candy: "🍭", Coffee: "☕", Tea: "🍵", Pancake: "🥞", Egg: "🥚", Chicken: "🐔",
+    Grass: "🌿", Cow: "🐄", Farm: "🚜", Alien: "👽", Ghost: "👻", Mountain: "⛰️", Cave: "🕳️",
+    Crystal: "🔮", Potion: "🧪", Wizard: "🧙", Castle: "🏰", Knight: "🛡️", Sword: "🗡️", Horse: "🐴",
+    Unicorn: "🦄", Butterfly: "🦋", Heart: "❤️", Rose: "🌹", Snake: "🐍", Turtle: "🐢", Shark: "🦈",
+    Whale: "🐳", Octopus: "🐙", Crab: "🦀", Penguin: "🐧", Owl: "🦉", Monkey: "🐒", Lion: "🦁",
+    Cat: "🐱", Dog: "🐶", Guitar: "🎸", Piano: "🎹", Drum: "🥁", Movie: "🎬", Camera: "📷",
+    Light: "💡", Photo: "🖼️", Money: "💰", Shop: "🛒", Bank: "🏦", Clock: "⏰", Planet: "🪐",
+    Peanut: "🥜", Sport: "🏅", Cup: "🥤", Medal: "🥇",
+    // SECRET (not counted in the total, and only found by a special recipe)
+    "azlan.me": "🔗"
   };
+
+  const SECRET = { "azlan.me": true };
 
   // Each recipe: [first item, second item, result]
   const RECIPES = [
@@ -29,13 +50,51 @@
     ["Sun", "Energy", "Star"], ["Star", "Star", "Galaxy"], ["Human", "Robot", "Game"],
     ["Human", "Fire", "Party"], ["Flower", "Fire", "Cake"], ["Cake", "Party", "Birthday"],
     ["Charcoal", "Lava", "Diamond"], ["Lava", "Metal", "Gold"], ["Gold", "Diamond", "Crown"],
-    ["Energy", "Diamond", "Magic"], ["Dinosaur", "Fire", "Dragon"]
+    ["Energy", "Diamond", "Magic"], ["Dinosaur", "Fire", "Dragon"],
+    // more items
+    ["Metal", "Energy", "Computer"], ["Computer", "Cloud", "Internet"], ["Computer", "Human", "Phone"],
+    ["Energy", "Air", "Sound"], ["Sound", "Human", "Music"], ["Wood", "Water", "Paper"],
+    ["Paper", "Human", "Book"], ["House", "Book", "School"], ["School", "Human", "Teacher"],
+    ["Plant", "Air", "Ball"], ["Ball", "Game", "Soccer"], ["Gold", "Glass", "Trophy"],
+    ["Rain", "Sun", "Rainbow"], ["Ocean", "Sand", "Island"], ["Sand", "Sun", "Beach"],
+    ["Wood", "Ocean", "Boat"], ["Metal", "Ocean", "Ship"], ["Metal", "Sky", "Plane"],
+    ["Storm", "Air", "Tornado"], ["Tree", "Tree", "Forest"], ["Flower", "House", "Garden"],
+    ["Flower", "Animal", "Bee"], ["Bee", "Flower", "Honey"], ["Tree", "Water", "Apple"],
+    ["Apple", "Bread", "Pie"], ["Plant", "Storm", "Sugar"], ["Sugar", "Fire", "Candy"],
+    ["Plant", "Steam", "Coffee"], ["Plant", "Water", "Tea"], ["Wheat", "Fire", "Bread"],
+    ["Animal", "Cloud", "Milk"], ["Milk", "Fire", "Cheese"], ["Bread", "Cheese", "Sandwich"],
+    ["Wheat", "Cheese", "Pizza"], ["Wheat", "Milk", "Pancake"], ["Milk", "Ice", "Ice_Cream"],
+    ["Pie", "Sugar", "Cookie"], ["Tree", "Sun", "Cacao"], ["Sugar", "Cacao", "Chocolate"],
+    ["Bird", "Earth", "Egg"], ["Egg", "Egg", "Chicken"], ["Plant", "Rain", "Grass"],
+    ["Animal", "Grass", "Cow"], ["Cow", "House", "Farm"], ["Life", "Magic", "Alien"],
+    ["Human", "Dust", "Ghost"], ["Stone", "Earth", "Mountain"], ["Mountain", "Dust", "Cave"],
+    ["Stone", "Magic", "Crystal"], ["Crystal", "Water", "Potion"], ["Human", "Potion", "Wizard"],
+    ["Stone", "Crown", "Castle"], ["Metal", "Stone", "Sword"], ["Human", "Sword", "Knight"],
+    ["Animal", "Mountain", "Horse"], ["Horse", "Magic", "Unicorn"], ["Flower", "Air", "Butterfly"],
+    ["Life", "Fire", "Heart"], ["Flower", "Heart", "Rose"], ["Animal", "Mud", "Snake"],
+    ["Animal", "Stone", "Turtle"], ["Fish", "Lightning", "Shark"], ["Fish", "Ocean", "Whale"],
+    ["Fish", "Storm", "Octopus"], ["Fish", "Sand", "Crab"], ["Bird", "Ice", "Penguin"],
+    ["Bird", "Moon", "Owl"], ["Animal", "Tree", "Monkey"], ["Animal", "Sun", "Lion"],
+    ["Animal", "House", "Cat"], ["Animal", "Human", "Dog"], ["Music", "Wood", "Guitar"],
+    ["Music", "Metal", "Piano"], ["Music", "Animal", "Drum"], ["Computer", "Party", "Movie"],
+    ["Glass", "Metal", "Camera"], ["Camera", "Light", "Photo"], ["Fire", "Glass", "Light"],
+    ["Gold", "Paper", "Money"], ["House", "Money", "Shop"], ["Shop", "Gold", "Bank"],
+    ["Metal", "Sun", "Clock"], ["Star", "Stone", "Planet"],     ["Peanut", "Bread", "Sandwich"], ["Plant", "Mud", "Peanut"], ["Gold", "Sport", "Medal"], ["Ball", "Human", "Sport"], ["Plant", "Sun", "Wheat"],
+    ["Glass", "Water", "Cup"], ["Sun", "Cloud", "Sky"],
+    // SECRET
+    ["Internet", "Birthday", "azlan.me"]
   ];
 
   const BASE = ["Water", "Fire", "Earth", "Air"];
   const KEY = "craftPantry";
   const recipeMap = {};
   RECIPES.forEach(function (r) { recipeMap[[r[0], r[1]].sort().join("|")] = r[2]; });
+
+  // Lets a test script check the data without a browser
+  if (typeof document === "undefined") {
+    module.exports = { ELEMENTS: ELEMENTS, RECIPES: RECIPES, SECRET: SECRET, BASE: BASE };
+    return;
+  }
 
   const boardCount = document.querySelector("#craftCount");
   const totalEl = document.querySelector("#craftTotal");
@@ -44,6 +103,18 @@
   const msg = document.querySelector("#craftMsg");
   const pantryEl = document.querySelector("#craftPantry");
   const resetBtn = document.querySelector("#craftReset");
+
+  const FB = (typeof FIREBASE_URL === "string" && FIREBASE_URL) ? FIREBASE_URL.replace(/\/$/, "") : "";
+  const crForm = document.querySelector("#crForm");
+  const crName = document.querySelector("#crName");
+  const crCount = document.querySelector("#crCount");
+  const crSubmit = document.querySelector("#crSubmit");
+  const crStatus = document.querySelector("#crFormStatus");
+  const crBoardStatus = document.querySelector("#crBoardStatus");
+  const crBoard = document.querySelector("#crBoard");
+
+  const PUBLIC_TOTAL = Object.keys(ELEMENTS).filter(function (n) { return !SECRET[n]; }).length;
+  const MIN_TO_SUBMIT = 8;
 
   let pantry = [];
   let first = null;
@@ -84,14 +155,17 @@
       icon.className = "pantry-icon";
       icon.textContent = ELEMENTS[name];
       text.className = "pantry-name";
-      text.textContent = name;
+      text.textContent = name.replace("_", " ");
       button.append(icon, text);
       button.setAttribute("aria-label", name);
       button.addEventListener("click", function () { pick(name); });
       pantryEl.append(button);
     });
-    boardCount.textContent = pantry.length;
-    totalEl.textContent = Object.keys(ELEMENTS).length;
+    const found = pantry.filter(function (n) { return !SECRET[n]; }).length;
+    boardCount.textContent = found;
+    totalEl.textContent = PUBLIC_TOTAL;
+    crCount.textContent = found;
+    crForm.hidden = found < MIN_TO_SUBMIT;
   }
 
   function combine() {
@@ -102,7 +176,11 @@
         pantry.push(result);
         save();
         newItem = result;
-        msg.textContent = "🎉 New discovery: " + label(result) + "!";
+        if (SECRET[result]) {
+          msg.textContent = "🤫 You found a secret: " + label(result) + "!";
+        } else {
+          msg.textContent = "🎉 New discovery: " + label(result) + "!";
+        }
       } else {
         msg.textContent = "You already have " + label(result) + ".";
       }
@@ -158,8 +236,80 @@
     renderPantry();
   });
 
+  // ---------- leaderboard (items found) ----------
+  function renderBoard(entries) {
+    crBoard.textContent = "";
+    if (entries.length === 0) {
+      crBoardStatus.textContent = "No scores yet. Be the first!";
+      return;
+    }
+    crBoardStatus.textContent = "";
+    entries.forEach(function (entry) {
+      const item = document.createElement("li");
+      const name = document.createElement("span");
+      const score = document.createElement("strong");
+      name.textContent = entry.name;
+      score.textContent = entry.score;
+      item.append(name, score);
+      crBoard.append(item);
+    });
+  }
+
+  async function loadBoard() {
+    if (!FB) {
+      crBoardStatus.textContent = "The leaderboard isn't connected yet.";
+      return;
+    }
+    try {
+      const query = "?orderBy=" + encodeURIComponent('"score"') + "&limitToLast=10";
+      const response = await fetch(FB + "/craftScores.json" + query);
+      if (!response.ok) throw new Error("Request failed: " + response.status);
+      const data = (await response.json()) || {};
+      const entries = Object.values(data)
+        .filter(function (e) { return e && typeof e.name === "string" && Number.isFinite(e.score); })
+        .sort(function (a, b) { return b.score - a.score; })
+        .slice(0, 10);
+      renderBoard(entries);
+    } catch (error) {
+      crBoardStatus.textContent = "Couldn't load the leaderboard. Try again later.";
+    }
+  }
+
+  crForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const name = crName.value.trim().slice(0, 20);
+    const found = pantry.filter(function (n) { return !SECRET[n]; }).length;
+    if (!name) {
+      crStatus.textContent = "Please type your name.";
+      return;
+    }
+    if (!FB) {
+      crStatus.textContent = "The leaderboard isn't connected yet. Please tell Azlan!";
+      return;
+    }
+    crSubmit.disabled = true;
+    crStatus.textContent = "Saving…";
+    try {
+      const response = await fetch(FB + "/craftScores.json", {
+        method: "POST",
+        body: JSON.stringify({ name: name, score: Math.min(found, 200), time: Date.now() })
+      });
+      if (!response.ok) throw new Error("Request failed: " + response.status);
+      try { localStorage.setItem("crName", name); } catch (error) { /* ignore */ }
+      crStatus.textContent = "✅ Saved to the leaderboard!";
+      await loadBoard();
+    } catch (error) {
+      crStatus.textContent = "Couldn't save your score. Please try again.";
+    } finally {
+      crSubmit.disabled = false;
+    }
+  });
+
+  try { crName.value = localStorage.getItem("crName") || ""; } catch (error) { /* ignore */ }
+
   load();
   save();
   renderSlots();
   renderPantry();
+  loadBoard();
 })();
