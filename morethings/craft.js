@@ -42,7 +42,7 @@
     ["Lava", "Water", "Stone"], ["Stone", "Water", "Sand"], ["Sand", "Fire", "Glass"],
     ["Cloud", "Energy", "Storm"], ["Storm", "Energy", "Lightning"], ["Water", "Rain", "Ocean"],
     ["Mud", "Energy", "Life"], ["Life", "Energy", "Animal"], ["Animal", "Air", "Bird"],
-    ["Animal", "Water", "Fish"], ["Animal", "Earth", "Dinosaur"], ["Animal", "Animal", "Human"],
+    ["Animal", "Water", "Fish"], ["Animal", "Earth", "Dinosaur"], ["Animal", "Life", "Human"],
     ["Stone", "Energy", "Metal"], ["Metal", "Human", "Robot"], ["Wood", "Stone", "House"],
     ["House", "Human", "Village"], ["Village", "Metal", "City"], ["Metal", "Fire", "Rocket"],
     ["Cloud", "Water", "Snow"], ["Snow", "Water", "Ice"], ["Snow", "Human", "Snowman"],
