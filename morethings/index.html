@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azlan's More Things</title>
+  <link rel="stylesheet" href="../style.css?v=10">
+  <link rel="stylesheet" href="more.css?v=3">
+</head>
+<body>
+
+  <header>
+    <h1>🎮 More Things</h1>
+    <p>Leave some feedback, craft new things, shoot some hoops, and face off in Puppet Hockey!</p>
+  </header>
+
+  <!-- 💬 FEEDBACK WALL -->
+  <section class="game-card">
+    <h2>💬 Add Your Feedback</h2>
+    <p>Tell Azlan what you think. Everyone can read the messages on the wall.</p>
+
+    <form id="fbForm" class="fb-form">
+      <label for="fbName">Your name</label>
+      <input id="fbName" type="text" maxlength="30" placeholder="Your name" autocomplete="nickname">
+
+      <label for="fbMessage">Your feedback</label>
+      <textarea id="fbMessage" maxlength="300" rows="3" placeholder="What do you think?"></textarea>
+
+      <button id="fbSubmit" type="submit">Post feedback</button>
+      <p id="fbStatus" class="more-message" aria-live="polite"></p>
+    </form>
+
+    <h3>📝 Feedback Wall</h3>
+    <p id="fbEmpty" class="more-message">Loading…</p>
+    <ul id="fbList" class="fb-list"></ul>
+  </section>
+
+  <!-- 🧪 INFINITE CRAFT -->
+  <section class="game-card">
+    <h2>🧪 Infinite Craft</h2>
+    <p>Tap two items to combine them. Keep mixing to discover new things!</p>
+
+    <div class="game-stats">
+      <span>🔎 Found: <strong id="craftCount">0</strong>/<span id="craftTotal">0</span></span>
+    </div>
+
+    <div class="craft-slots">
+      <button id="craftA" type="button" class="craft-slot">Pick one</button>
+      <span class="craft-plus">+</span>
+      <button id="craftB" type="button" class="craft-slot">Pick two</button>
+    </div>
+
+    <p id="craftMsg" class="more-message" aria-live="polite">Pick any two items!</p>
+    <div id="craftPantry" class="craft-pantry" role="group" aria-label="Your items"></div>
+    <button id="craftReset" type="button" class="small-btn">Reset my items</button>
+  </section>
+
+  <!-- 🏀 BASKETBALL -->
+  <section class="game-card">
+    <h2>🏀 Basketball</h2>
+    <p>Pull the ball back and let go to shoot. You have 60 seconds to score as many baskets as you can!</p>
+
+    <div class="game-stats">
+      <span>🏀 Score: <strong id="bballScore">0</strong></span>
+      <span>🎯 Shots: <strong id="bballShots">0</strong></span>
+      <span>⏱️ Time: <strong id="bballTime">60</strong>s</span>
+      <span>🏆 Best: <strong id="bballBest">0</strong></span>
+    </div>
+
+    <canvas id="bballCanvas" class="more-canvas" width="320" height="420"
+      aria-label="Basketball. Drag the ball down and let go to shoot."></canvas>
+
+    <p id="bballMessage" class="more-message" aria-live="polite">Press Start, then drag the ball to shoot!</p>
+    <button id="bballStart" type="button">Start Game</button>
+
+    <form id="bbForm" class="fb-form" hidden>
+      <label for="bbName">You scored <span id="bbYouScore">0</span>! Enter your name for the leaderboard:</label>
+      <div class="inline-row">
+        <input id="bbName" type="text" maxlength="20" placeholder="Your name" autocomplete="nickname">
+        <button id="bbSubmit" type="submit">Save score</button>
+      </div>
+      <p id="bbFormStatus" class="more-message" aria-live="polite"></p>
+    </form>
+
+    <h3>🏆 Basketball Leaderboard</h3>
+    <p id="bbBoardStatus" class="more-message">Loading…</p>
+    <ol id="bbBoard" class="leader-list"></ol>
+  </section>
+
+  <!-- 🏒 PUPPET HOCKEY -->
+  <section class="game-card">
+    <h2>🏒 Puppet Hockey</h2>
+    <p>Our own air-hockey style game. Move your puppet 🎭 at the bottom with your mouse or finger, or the arrow keys. Shoot the puck into the 🤖 goal on the right. You have 60 seconds!</p>
+
+    <div class="game-stats">
+      <span>🎭 You: <strong id="hkYou">0</strong></span>
+      <span>🤖 Computer: <strong id="hkAi">0</strong></span>
+      <span>⏱️ Time: <strong id="hkTime">60</strong>s</span>
+    </div>
+
+    <canvas id="hockeyCanvas" class="more-canvas" width="400" height="300"
+      tabindex="0" aria-label="Puppet hockey. Move your puppet with the mouse, finger, or arrow keys to score."></canvas>
+
+    <p id="hkMessage" class="more-message" aria-live="polite">Press Start to play!</p>
+    <button id="hkStart" type="button">Start Game</button>
+
+    <form id="hkForm" class="fb-form" hidden>
+      <label for="hkName">You scored <span id="hkYouScore">0</span>! Enter your name for the leaderboard:</label>
+      <div class="inline-row">
+        <input id="hkName" type="text" maxlength="20" placeholder="Your name" autocomplete="nickname">
+        <button id="hkSubmit" type="submit">Save score</button>
+      </div>
+      <p id="hkFormStatus" class="more-message" aria-live="polite"></p>
+    </form>
+
+    <h3>🏆 Puppet Hockey Leaderboard</h3>
+    <p id="hkBoardStatus" class="more-message">Loading…</p>
+    <ol id="hkBoard" class="leader-list"></ol>
+  </section>
+
+  <footer>
+    <p><a href="../otherstuff/">← Back to the other games</a></p>
+    <p><a href="../">Back to the birthday invitation</a></p>
+    <p>Made by Azlan 💜</p>
+  </footer>
+
+  <script src="../config.js?v=1"></script>
+  <script src="more.js?v=3"></script>
+  <script src="craft.js?v=1"></script>
+  <script src="basketball.js?v=2"></script>
+  <script src="hockey.js?v=1"></script>
+</body>
+</html>
