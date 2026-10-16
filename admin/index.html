@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin</title>
+  <link rel="stylesheet" href="../style.css?v=10">
+  <link rel="stylesheet" href="admin.css?v=1">
+</head>
+<body>
+
+  <header>
+    <h1>🔐 Admin</h1>
+    <p>Only you can sign in here.</p>
+  </header>
+
+  <!-- LOGIN -->
+  <section id="loginBox" class="game-card" hidden>
+    <h2>Sign in</h2>
+    <form id="loginForm" class="fb-form">
+      <label for="loginEmail">Email</label>
+      <input id="loginEmail" type="email" autocomplete="username" required>
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" required>
+      <button type="submit">Sign in</button>
+      <p id="loginStatus" class="more-message" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <!-- VERIFY -->
+  <section id="verifyBox" class="game-card" hidden>
+    <h2>Verify your email</h2>
+    <p>Check your inbox for a verification link, click it, then press the button below.</p>
+    <div class="admin-row">
+      <button id="verifyDone" type="button">I've verified, reload</button>
+      <button id="verifySend" type="button">Send another email</button>
+    </div>
+    <p id="verifyStatus" class="more-message" aria-live="polite"></p>
+    <button id="verifyOut" type="button" class="small-btn">Sign out</button>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashBox" hidden>
+    <div class="game-card">
+      <div class="admin-row">
+        <h2>Dashboard</h2>
+        <div class="admin-row">
+          <button id="refreshBtn" type="button" class="small-btn">Refresh</button>
+          <button id="signOutBtn" type="button" class="small-btn">Sign out</button>
+        </div>
+      </div>
+      <p id="dashStatus" class="more-message" aria-live="polite">Loading…</p>
+    </div>
+
+    <div class="game-card">
+      <h2>📋 RSVPs</h2>
+      <div class="game-stats">
+        <span>✅ Coming: <strong id="rsvpYes">0</strong></span>
+        <span>👥 Guests: <strong id="rsvpGuests">0</strong></span>
+        <span>❌ Not coming: <strong id="rsvpNo">0</strong></span>
+        <span>🥜 Peanut allergies: <strong id="rsvpPeanut">0</strong></span>
+      </div>
+      <div id="rsvpList" class="admin-list"></div>
+    </div>
+
+    <div class="game-card">
+      <h2>💬 Feedback</h2>
+      <p>Edit or delete any post. Changes show on the wall straight away.</p>
+      <div id="fbAdminList" class="admin-list"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p><a href="../">← Back to the invitation</a></p>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="../config.js?v=2"></script>
+  <script src="admin.js?v=1"></script>
+</body>
+</html>

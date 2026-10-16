@@ -1,0 +1,96 @@
+.admin-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.game-card button {
+  padding: 10px 18px;
+  font-size: 15px;
+}
+
+.game-card .small-btn {
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.game-card .danger {
+  background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+}
+
+.fb-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 420px;
+  margin: 12px auto 0;
+  text-align: left;
+}
+
+.fb-form label {
+  font-weight: bold;
+  color: #cbd5e1;
+  margin-top: 6px;
+}
+
+.fb-form input,
+.admin-list textarea,
+.admin-list input {
+  padding: 10px 12px;
+  border: 1px solid #6366f1;
+  border-radius: 10px;
+  background: #11152a;
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 15px;
+  width: 100%;
+}
+
+.more-message {
+  min-height: 1.5em;
+  margin: 10px 0;
+  color: #c4b5fd;
+  font-weight: bold;
+}
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  margin-top: 12px;
+}
+
+.admin-item {
+  padding: 12px 14px;
+  border: 1px solid #312e81;
+  border-radius: 12px;
+  background: #11152a;
+  overflow-wrap: anywhere;
+}
+
+.admin-item .meta {
+  color: #a5b4fc;
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.admin-item .tag-no { color: #fca5a5; }
+.admin-item .tag-yes { color: #86efac; }
+.admin-item .tag-peanut { color: #fdba74; }
+
+.admin-item textarea {
+  margin-top: 8px;
+  min-height: 70px;
+}
+
+.admin-item .admin-row {
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.game-stats strong {
+  color: #fde047;
+}

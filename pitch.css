@@ -1,0 +1,38 @@
+/* ⚽ SOCCER PITCH BACKGROUND for the game pages */
+body {
+  background:
+    repeating-linear-gradient(90deg, #15803d 0 90px, #16a34a 90px 180px) !important;
+  background-attachment: fixed;
+}
+
+/* Touchline around the edge */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 10px;
+  border: 3px solid #ffffff66;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Halfway circle */
+body::after {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 280px;
+  height: 280px;
+  margin: -140px 0 0 -140px;
+  border: 3px solid #ffffff44;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Keep the page content above the pitch lines */
+body > * {
+  position: relative;
+  z-index: 1;
+}
