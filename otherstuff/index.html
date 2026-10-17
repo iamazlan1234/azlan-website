@@ -47,10 +47,10 @@
     </p>
 
     <form id="scoreForm" class="score-form" hidden>
-      <label for="playerName">Add your score to the leaderboard:</label>
+      <label for="playerName">Add your score (first name and last initial, like Bob S.):</label>
       <div class="score-form-row">
         <input id="playerName" type="text" maxlength="20" required
-          placeholder="Your name" autocomplete="nickname">
+          placeholder="e.g. Bob S." autocomplete="off">
         <button type="submit">Submit score</button>
       </div>
     </form>
@@ -127,7 +127,8 @@
   </button>
 
   <script src="../config.js?v=1"></script>
-  <script src="../script.js?v=6"></script>
+  <script src="../board.js?v=1"></script>
+  <script src="../script.js?v=7"></script>
   <script src="../soccer.js?v=4"></script>
   <script src="../chess.js?v=1"></script>
 </body>

@@ -416,8 +416,8 @@
       const entries = Object.values(data)
         .filter(function (e) { return e && typeof e.name === "string" && Number.isFinite(e.score); })
         .sort(function (a, b) { return b.score - a.score; })
-        .slice(0, 10);
-      renderBoard(entries);
+        ;
+      renderBoard(Board.bestOnly(entries));
     } catch (error) {
       boardStatus.textContent = "Couldn't load the leaderboard. Try again later.";
     }
@@ -425,9 +425,9 @@
 
   formBox.addEventListener("submit", async function (event) {
     event.preventDefault();
-    const name = nameIn.value.trim().slice(0, 20);
+    const name = Board.cleanName(nameIn.value);
     if (!name) {
-      formStatus.textContent = "Please type your name.";
+      formStatus.textContent = "Please enter your first name and last initial, like Bob S.";
       return;
     }
     if (!FB) {
@@ -437,11 +437,12 @@
     submitBtn.disabled = true;
     formStatus.textContent = "Saving…";
     try {
-      const response = await fetch(FB + "/hockeyScores.json", {
-        method: "POST",
-        body: JSON.stringify({ name: name, score: Math.min(youGoals, 50), time: Date.now() })
-      });
-      if (!response.ok) throw new Error("Request failed: " + response.status);
+      const result = await Board.submitBest(FB, "hockeyScores", name, Math.min(youGoals, 50));
+      if (!result.saved) {
+        formStatus.textContent = "You already have a higher score saved (" + result.best + "), so this one wasn't kept.";
+        submitBtn.disabled = false;
+        return;
+      }
       try { localStorage.setItem("hkName", name); } catch (error) { /* ignore */ }
       formStatus.textContent = "✅ Saved to the leaderboard!";
       formBox.hidden = true;

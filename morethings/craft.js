@@ -510,8 +510,8 @@
       const entries = Object.values(data)
         .filter(function (e) { return e && typeof e.name === "string" && Number.isFinite(e.score); })
         .sort(function (a, b) { return b.score - a.score; })
-        .slice(0, 10);
-      renderBoard(entries);
+        ;
+      renderBoard(Board.bestOnly(entries));
     } catch (error) {
       crBoardStatus.textContent = "Couldn't load the leaderboard. Try again later.";
     }
@@ -519,10 +519,10 @@
 
   crForm.addEventListener("submit", async function (event) {
     event.preventDefault();
-    const name = crName.value.trim().slice(0, 20);
+    const name = Board.cleanName(crName.value);
     const found = pantry.filter(function (n) { return !SECRET[n]; }).length;
     if (!name) {
-      crStatus.textContent = "Please type your name.";
+      crStatus.textContent = "Please enter your first name and last initial, like Bob S.";
       return;
     }
     if (!FB) {
@@ -532,11 +532,12 @@
     crSubmit.disabled = true;
     crStatus.textContent = "Saving…";
     try {
-      const response = await fetch(FB + "/craftScores.json", {
-        method: "POST",
-        body: JSON.stringify({ name: name, score: Math.min(found, 200), time: Date.now() })
-      });
-      if (!response.ok) throw new Error("Request failed: " + response.status);
+      const result = await Board.submitBest(FB, "craftScores", name, Math.min(found, 200));
+      if (!result.saved) {
+        crStatus.textContent = "You already have a higher score saved (" + result.best + "), so this one wasn't kept.";
+        crSubmit.disabled = false;
+        return;
+      }
       try { localStorage.setItem("crName", name); } catch (error) { /* ignore */ }
       crStatus.textContent = "✅ Saved to the leaderboard!";
       await loadBoard();

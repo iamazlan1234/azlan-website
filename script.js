@@ -199,7 +199,7 @@ async function fetchScores() {
   if (!response.ok) throw new Error("Request failed: " + response.status);
 
   const data = await response.json();
-  return sortAndTrim(Object.values(data || {}));
+  return Board.bestOnly(Object.values(data || {}));
 }
 
 async function saveScore(name, score) {
@@ -214,11 +214,7 @@ async function saveScore(name, score) {
     return;
   }
 
-  const response = await fetch(LEADERBOARD_URL.replace(/\/$/, "") + "/scores.json", {
-    method: "POST",
-    body: JSON.stringify({ name: name, score: score })
-  });
-  if (!response.ok) throw new Error("Request failed: " + response.status);
+  return Board.submitBest(LEADERBOARD_URL, "scores", name, score);
 }
 
 function renderLeaderboard(entries) {
@@ -275,14 +271,22 @@ function hideScoreForm() {
 scoreForm.addEventListener("submit", async function (event) {
   event.preventDefault();
 
-  const name = playerNameInput.value.trim().slice(0, 20);
-  if (!name || pendingScore <= 0) return;
+  const name = Board.cleanName(playerNameInput.value);
+  if (!name) {
+    gameResult.textContent = "Please enter your first name and last initial, like Bob S.";
+    return;
+  }
+  if (pendingScore <= 0) return;
 
   const submitButton = scoreForm.querySelector("button");
   submitButton.disabled = true;
 
   try {
-    await saveScore(name, pendingScore);
+    const result = await saveScore(name, pendingScore);
+    if (result && !result.saved) {
+      gameResult.textContent = "You already have a higher score saved (" + result.best + "), so this one wasn't kept.";
+      return;
+    }
     try {
       localStorage.setItem(NAME_KEY, name);
     } catch (error) {

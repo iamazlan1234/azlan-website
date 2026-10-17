@@ -56,9 +56,9 @@
     <button id="craftReset" type="button" class="small-btn">Reset my items</button>
 
     <form id="crForm" class="fb-form" hidden>
-      <label for="crName">You've found <span id="crCount">0</span> items! Enter your name for the leaderboard:</label>
+      <label for="crName">You've found <span id="crCount">0</span> items! Enter your first name and last initial (like Bob S.):</label>
       <div class="inline-row">
-        <input id="crName" type="text" maxlength="20" placeholder="Your name" autocomplete="nickname">
+        <input id="crName" type="text" maxlength="20" placeholder="e.g. Bob S." autocomplete="off">
         <button id="crSubmit" type="submit">Save score</button>
       </div>
       <p id="crFormStatus" class="more-message" aria-live="polite"></p>
@@ -89,9 +89,9 @@
     <button id="bballStart" type="button">Start Game</button>
 
     <form id="bbForm" class="fb-form" hidden>
-      <label for="bbName">You scored <span id="bbYouScore">0</span>! Enter your name for the leaderboard:</label>
+      <label for="bbName">You scored <span id="bbYouScore">0</span>! Enter your first name and last initial (like Bob S.):</label>
       <div class="inline-row">
-        <input id="bbName" type="text" maxlength="20" placeholder="Your name" autocomplete="nickname">
+        <input id="bbName" type="text" maxlength="20" placeholder="e.g. Bob S." autocomplete="off">
         <button id="bbSubmit" type="submit">Save score</button>
       </div>
       <p id="bbFormStatus" class="more-message" aria-live="polite"></p>
@@ -120,9 +120,9 @@
     <button id="hkStart" type="button">Start Game</button>
 
     <form id="hkForm" class="fb-form" hidden>
-      <label for="hkName">You scored <span id="hkYouScore">0</span>! Enter your name for the leaderboard:</label>
+      <label for="hkName">You scored <span id="hkYouScore">0</span>! Enter your first name and last initial (like Bob S.):</label>
       <div class="inline-row">
-        <input id="hkName" type="text" maxlength="20" placeholder="Your name" autocomplete="nickname">
+        <input id="hkName" type="text" maxlength="20" placeholder="e.g. Bob S." autocomplete="off">
         <button id="hkSubmit" type="submit">Save score</button>
       </div>
       <p id="hkFormStatus" class="more-message" aria-live="polite"></p>
@@ -140,6 +140,7 @@
   </footer>
 
   <script src="../config.js?v=1"></script>
+  <script src="../board.js?v=1"></script>
   <script src="more.js?v=4"></script>
   <script src="craft.js?v=2"></script>
   <script src="basketball.js?v=2"></script>

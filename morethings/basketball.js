@@ -354,8 +354,8 @@
       const entries = Object.values(data)
         .filter(function (e) { return e && typeof e.name === "string" && Number.isFinite(e.score); })
         .sort(function (a, b) { return b.score - a.score; })
-        .slice(0, 10);
-      renderBoard(entries);
+        ;
+      renderBoard(Board.bestOnly(entries));
     } catch (error) {
       bbBoardStatus.textContent = "Couldn't load the leaderboard. Try again later.";
     }
@@ -363,9 +363,9 @@
 
   bbForm.addEventListener("submit", async function (event) {
     event.preventDefault();
-    const name = bbName.value.trim().slice(0, 20);
+    const name = Board.cleanName(bbName.value);
     if (!name) {
-      bbFormStatus.textContent = "Please type your name.";
+      bbFormStatus.textContent = "Please enter your first name and last initial, like Bob S.";
       return;
     }
     if (!FB) {
@@ -375,11 +375,12 @@
     bbSubmit.disabled = true;
     bbFormStatus.textContent = "Saving…";
     try {
-      const response = await fetch(FB + "/basketballScores.json", {
-        method: "POST",
-        body: JSON.stringify({ name: name, score: Math.min(made, 100), time: Date.now() })
-      });
-      if (!response.ok) throw new Error("Request failed: " + response.status);
+      const result = await Board.submitBest(FB, "basketballScores", name, Math.min(made, 100));
+      if (!result.saved) {
+        bbFormStatus.textContent = "You already have a higher score saved (" + result.best + "), so this one wasn't kept.";
+        bbSubmit.disabled = false;
+        return;
+      }
       try { localStorage.setItem("bbName", name); } catch (error) { /* ignore */ }
       bbFormStatus.textContent = "✅ Saved to the leaderboard!";
       bbForm.hidden = true;
