@@ -40,6 +40,7 @@
   const boardStatus = document.querySelector("#hkBoardStatus");
   const boardList = document.querySelector("#hkBoard");
 
+  let goalPause = 0, goalSide = null;
   let you, cpu, puck, running, timeLeft, youGoals, aiGoals, flash, flashT, keys, mouseDown, last, sTimer;
   let t = 0;
 
@@ -107,7 +108,7 @@
     if (you.charging) you.charge = Math.min(1, you.charge + dt * 1.1);
 
     // Pick up a loose puck near the blade
-    if (!puck.owner && Math.abs(puck.x - bladeX(you)) < 20 && Math.abs(puck.y - bladeY()) < 20 && Math.abs(puck.vy) < 80) {
+    if (!puck.owner && goalPause <= 0 && Math.abs(puck.x - bladeX(you)) < 20 && Math.abs(puck.y - bladeY()) < 20 && Math.abs(puck.vy) < 80) {
       puck.owner = "you";
     }
   }
@@ -129,7 +130,7 @@
     const dir = clamp(target - cpu.x, -1, 1);
     skate(cpu, Math.abs(target - cpu.x) < 4 ? 0 : dir, dt * CPU_MAX / SKATE_MAX);
 
-    if (!puck.owner && Math.abs(puck.x - bladeX(cpu)) < 20 && Math.abs(puck.y - bladeY()) < 20 && Math.abs(puck.vy) < 80) {
+    if (!puck.owner && goalPause <= 0 && Math.abs(puck.x - bladeX(cpu)) < 20 && Math.abs(puck.y - bladeY()) < 20 && Math.abs(puck.vy) < 80) {
       puck.owner = "cpu";
     }
     if (puck.owner === "cpu" && sTimer <= 0) {
@@ -158,12 +159,23 @@
 
     stepYou(dt);
     stepCpu(dt);
+    if (goalPause > 0) {
+      goalPause -= dt;
+      if (goalPause <= 0) {
+        goalPause = 0;
+        resetAfterGoal(goalSide === "cpu");
+      }
+    }
 
     // Puck follows its owner's blade, otherwise moves with physics
-    if (puck.owner === "you") {
+    if (goalPause > 0) {
+      // Frozen in the net during the goal celebration
+    } else if (puck.owner === "you") {
       puck.x = bladeX(you); puck.y = bladeY() - 6; puck.vx = 0; puck.vy = 0;
     } else if (puck.owner === "cpu") {
       puck.x = bladeX(cpu); puck.y = bladeY() - 6; puck.vx = 0; puck.vy = 0;
+    } else if (goalPause > 0) {
+      // Puck stays visible in the net while the goal is celebrated
     } else {
       puck.vy += GRAVITY * dt;
       puck.x += puck.vx * dt;
@@ -179,8 +191,22 @@
       const inLeftNet = puck.y > NET_TOP && puck.y < NET_BOTTOM;
       if (puck.x < BOARD_L && !(inLeftNet)) { puck.x = BOARD_L; puck.vx = Math.abs(puck.vx) * 0.5; }
       if (puck.x > BOARD_R && !(inLeftNet)) { puck.x = BOARD_R; puck.vx = -Math.abs(puck.vx) * 0.5; }
-      if (puck.x > W - 6 && inLeftNet) { youGoals++; showFlash("🚨 GOAL! Nice shot!"); resetAfterGoal(false); }
-      if (puck.x < 6 && inLeftNet) { aiGoals++; showFlash("😬 The computer scores"); resetAfterGoal(true); }
+      if (puck.x > W - 6 && inLeftNet) {
+        youGoals++;
+        showFlash("🚨 GOAL! Nice shot!");
+        goalSide = "you";
+        goalPause = 1.4;
+        puck.owner = null;
+        puck.x = W - 12; puck.vx = 0; puck.vy = 0;
+      }
+      if (puck.x < 6 && inLeftNet) {
+        aiGoals++;
+        showFlash("😬 The computer scores");
+        goalSide = "cpu";
+        goalPause = 1.4;
+        puck.owner = null;
+        puck.x = 12; puck.vx = 0; puck.vy = 0;
+      }
       if (puck.x < BOARD_L - 14 || puck.x > BOARD_R + 14) { /* safety: keep the puck visible */ puck.x = clamp(puck.x, 0, W); }
     }
 
@@ -553,6 +579,7 @@
     flashT = 0;
     sTimer = 0.5;
     resetPositions();
+    goalPause = 0;
     servePuck(false);
     formBox.hidden = true;
     running = true;
