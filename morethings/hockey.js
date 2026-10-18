@@ -16,7 +16,14 @@
   const MATCH_SECONDS = 60;
   const SKATE_ACCEL = 1100;
   const SKATE_MAX = 210;
-  const CPU_MAX = 190;
+  // Difficulty settings for the computer player
+  const LEVELS = {
+    easy:   { speed: 150, gap: [1.8, 2.6], power: [0.35, 0.6], shootChance: 0.10, block: 0.35 },
+    medium: { speed: 190, gap: [1.2, 2.0], power: [0.6, 0.9],  shootChance: 0.22, block: 0.7 },
+    hard:   { speed: 235, gap: [0.6, 1.2], power: [0.85, 1.15], shootChance: 0.45, block: 1.0 }
+  };
+  let level = LEVELS.medium;
+  const levelSelect = document.querySelector("#hkLevel");
 
   const canvas = document.querySelector("#hockeyCanvas");
   if (!canvas) return;
@@ -66,6 +73,7 @@
 
   function shootFrom(p, power) {
     puck.owner = null;
+    puck.noPick = 0.6;   // the shooter can't grab the puck straight back
     puck.x = bladeX(p);
     puck.y = bladeY() - 6;
     const speed = 240 + power * 380;
@@ -108,7 +116,7 @@
     if (you.charging) you.charge = Math.min(1, you.charge + dt * 1.1);
 
     // Pick up a loose puck near the blade
-    if (!puck.owner && goalPause <= 0 && Math.abs(puck.x - bladeX(you)) < 20 && Math.abs(puck.y - bladeY()) < 20 && Math.abs(puck.vy) < 80) {
+    if (!puck.owner && goalPause <= 0 && !(puck.noPick > 0) && Math.abs(puck.x - bladeX(you)) < 20 && Math.abs(puck.y - bladeY()) < 20 && Math.abs(puck.vy) < 80) {
       puck.owner = "you";
     }
   }
@@ -121,27 +129,30 @@
 
     let target;
     if (puck.owner === "cpu") {
-      target = 300;                                   // carry toward your goal
+      target = 120;                                   // carry toward the left goal (its attack)
     } else if (puck.owner === "you") {
-      target = clamp(you.x + 60, 180, 320);           // stay between you and the cpu goal... roughly
+      target = clamp(you.x + 80, 230, 330);           // skate in front of you to block the shot
     } else {
       target = puck.x + (puck.vx > 0 ? 25 : -10);      // go for loose pucks
     }
     const dir = clamp(target - cpu.x, -1, 1);
-    skate(cpu, Math.abs(target - cpu.x) < 4 ? 0 : dir, dt * CPU_MAX / SKATE_MAX);
+    skate(cpu, Math.abs(target - cpu.x) < 4 ? 0 : dir, dt * level.speed / SKATE_MAX);
 
-    if (!puck.owner && goalPause <= 0 && Math.abs(puck.x - bladeX(cpu)) < 20 && Math.abs(puck.y - bladeY()) < 20 && Math.abs(puck.vy) < 80) {
+    if (!puck.owner && goalPause <= 0 && !(puck.noPick > 0) && Math.abs(puck.x - bladeX(cpu)) < 20 && Math.abs(puck.y - bladeY()) < 20 && Math.abs(puck.vy) < 80) {
       puck.owner = "cpu";
     }
     if (puck.owner === "cpu" && sTimer <= 0) {
-      if (cpu.x > 250 || Math.random() < 0.15) {
-        shootFrom(cpu, 0.6 + Math.random() * 0.4);
-        sTimer = 1.2 + Math.random();
+      // Shoots more often the closer it gets to the left goal
+      const chance = level.shootChance + (cpu.x < 200 ? 0.5 : 0);
+      if (Math.random() < chance) {
+        const [lo, hi] = level.power;
+        shootFrom(cpu, lo + Math.random() * (hi - lo));
+        sTimer = level.gap[0] + Math.random() * (level.gap[1] - level.gap[0]);
       } else {
         sTimer = 0.3;
       }
     }
-    if (puck.owner === "you" && Math.random() < 0.6 * dt && Math.abs(cpu.x - you.x) < 60 && cpu.checkT <= 0) {
+    if (puck.owner === "you" && Math.random() < 1.2 * level.block * dt && Math.abs(cpu.x - you.x) < 80 && cpu.checkT <= 0) {
       cpu.checkT = 1.2;
       cpu.swing = 0.25;
       you.vx += 90 * (you.x > cpu.x ? 1 : -1);
@@ -159,6 +170,7 @@
 
     stepYou(dt);
     stepCpu(dt);
+    if (puck.noPick > 0) puck.noPick -= dt;
     if (goalPause > 0) {
       goalPause -= dt;
       if (goalPause <= 0) {
@@ -578,6 +590,7 @@
     flash = "";
     flashT = 0;
     sTimer = 0.5;
+    level = LEVELS[levelSelect ? levelSelect.value : "medium"] || LEVELS.medium;
     resetPositions();
     goalPause = 0;
     servePuck(false);

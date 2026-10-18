@@ -6,7 +6,8 @@
   <title>Azlan's More Things</title>
   <link rel="stylesheet" href="../style.css?v=10">
   <link rel="stylesheet" href="../pitch.css?v=1">
-  <link rel="stylesheet" href="more.css?v=4">
+  <link rel="stylesheet" href="more.css?v=5">
+  <link rel="stylesheet" href="../fullscreen.css?v=1">
 </head>
 <body>
 
@@ -117,6 +118,14 @@
       tabindex="0" aria-label="Puppet hockey. Use A and D to skate, hold F to shoot, and S to check."></canvas>
 
     <p id="hkMessage" class="more-message" aria-live="polite">Press Start to play!</p>
+    <div class="level-row">
+      <label for="hkLevel">Difficulty:</label>
+      <select id="hkLevel">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
     <button id="hkStart" type="button">Start Game</button>
 
     <form id="hkForm" class="fb-form" hidden>
@@ -140,10 +149,12 @@
   </footer>
 
   <script src="../config.js?v=1"></script>
+  <script src="../fullscreen.js?v=1"></script>
   <script src="../board.js?v=1"></script>
+  <script src="../fullscreen.js?v=1"></script>
   <script src="more.js?v=4"></script>
   <script src="craft.js?v=2"></script>
   <script src="basketball.js?v=2"></script>
-  <script src="hockey.js?v=2"></script>
+  <script src="hockey.js?v=3"></script>
 </body>
 </html>
