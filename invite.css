@@ -425,3 +425,16 @@ body::after {
     transition: none;
   }
 }
+
+/* Test message, top right */
+.hello-msg {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  z-index: 10;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #ffffffee;
+  color: #14532d;
+  font-weight: bold;
+}
