@@ -26,7 +26,7 @@
     Whale: "🐳", Octopus: "🐙", Crab: "🦀", Penguin: "🐧", Owl: "🦉", Monkey: "🐒", Lion: "🦁",
     Cat: "🐱", Dog: "🐶", Guitar: "🎸", Piano: "🎹", Drum: "🥁", Movie: "🎬", Camera: "📷",
     Light: "💡", Photo: "🖼️", Money: "💰", Shop: "🛒", Bank: "🏦", Clock: "⏰", Planet: "🪐",
-    Peanut: "🥜", Sport: "🏅", Cup: "🥤", Medal: "🥇",
+    Peanut: "🥜", Sport: "🏅", Cup: "🥤", Medal: "🥇", Apollo 13:🎬
     // 120 more items
     Brick: "🧱",
     Bridge: "🌉",
@@ -156,7 +156,7 @@
 
   // Each recipe: [first item, second item, result]
   const RECIPES = [
-    ["Water", "Fire", "Steam"], ["Water", "Earth", "Mud"], ["Fire", "Earth", "Lava"],
+    ["Water", "Fire", "Steam"], ["Movie," "Astronaut," "Apollo 13"]  ["Water", "Earth", "Mud"], ["Fire", "Earth", "Lava"],
     ["Earth", "Air", "Dust"], ["Fire", "Air", "Energy"], ["Water", "Air", "Rain"],
     ["Steam", "Air", "Cloud"], ["Rain", "Earth", "Plant"], ["Plant", "Energy", "Flower"],
     ["Plant", "Earth", "Tree"], ["Tree", "Fire", "Wood"], ["Wood", "Fire", "Charcoal"],
