@@ -3,94 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Azlan's Birthday!</title>
-  <link rel="stylesheet" href="invite.css?v=7">
+  <title>Azlan's Games</title>
+  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="pitch.css?v=1">
+  <link rel="stylesheet" href="morethings/more.css?v=5">
+  <link rel="stylesheet" href="fullscreen.css?v=1">
 </head>
 <body>
 
-  <main class="wrap">
-    <section class="invite">
-      <div class="ball" aria-hidden="true">⚽</div>
+  <header>
+    <h1>🎮 Azlan's Games</h1>
+    <p>Leave some feedback, craft new things, shoot some hoops, and face off in Puppet Hockey!</p>
+  </header>
 
-      <h1>Azlan's Birthday!</h1>
+  <!-- 💬 FEEDBACK WALL -->
+  <section class="game-card">
+    <h2>💬 Add Your Feedback</h2>
+    <p>Tell Azlan what you think. Everyone can read the messages on the wall.</p>
 
-      <p class="when">
-        <span>Sunday, October 18th</span>
-        <span class="time">12pm to 4pm</span>
-      </p>
+    <form id="fbForm" class="fb-form">
+      <label for="fbName">Your name</label>
+      <input id="fbName" type="text" maxlength="30" placeholder="Your name" autocomplete="nickname">
 
-      <div class="where">
-        <button id="addressBtn" class="address-btn" type="button">📍 Click here to see the address</button>
+      <label for="fbMessage">Your feedback</label>
+      <textarea id="fbMessage" maxlength="300" rows="3" placeholder="What do you think?"></textarea>
 
-        <form id="addressForm" class="address-form" hidden>
-          <label for="addressAnswer">What is our 5th grade teacher's first name?</label>
-          <div class="address-row">
-            <input id="addressAnswer" type="text" maxlength="40" autocomplete="off">
-            <button class="address-check" type="submit">Check</button>
-          </div>
-          <p id="addressStatus" class="form-status" aria-live="polite"></p>
-        </form>
+      <button id="fbSubmit" type="submit">Post feedback</button>
+      <p id="fbStatus" class="more-message" aria-live="polite"></p>
+    </form>
 
-        <p id="addressReveal" class="address-reveal" aria-live="polite" hidden></p>
+    <h3>📝 Feedback Wall</h3>
+    <p id="fbEmpty" class="more-message">Loading…</p>
+    <ul id="fbList" class="fb-list"></ul>
+  </section>
+
+  <!-- 🧪 INFINITE CRAFT -->
+  <section class="game-card">
+    <h2>🧪 Infinite Craft</h2>
+    <p>Tap two items to combine them. Keep mixing to discover new things!</p>
+
+    <div class="game-stats">
+      <span>🔎 Found: <strong id="craftCount">0</strong>/<span id="craftTotal">0</span></span>
+    </div>
+
+    <div class="craft-slots">
+      <button id="craftA" type="button" class="craft-slot">Pick one</button>
+      <span class="craft-plus">+</span>
+      <button id="craftB" type="button" class="craft-slot">Pick two</button>
+    </div>
+
+    <p id="craftMsg" class="more-message" aria-live="polite">Pick any two items!</p>
+    <div id="craftPantry" class="craft-pantry" role="group" aria-label="Your items"></div>
+    <button id="craftReset" type="button" class="small-btn">Reset my items</button>
+
+    <form id="crForm" class="fb-form" hidden>
+      <label for="crName">You've found <span id="crCount">0</span> items! Enter your first name and last initial (like Bob S.):</label>
+      <div class="inline-row">
+        <input id="crName" type="text" maxlength="20" placeholder="e.g. Bob S." autocomplete="off">
+        <button id="crSubmit" type="submit">Save score</button>
       </div>
+      <p id="crFormStatus" class="more-message" aria-live="polite"></p>
+    </form>
 
-      <p class="tagline">🍕 Join me for some pizza, cake and fun! 🎂</p>
-      <p class="note">🥪 If you arrive by noon, we will spend about 15 mins making PB&amp;J sandwiches for the local homeless shelter.</p>
+    <h3>🏆 Infinite Craft Leaderboard</h3>
+    <p id="crBoardStatus" class="more-message">Loading…</p>
+    <ol id="crBoard" class="leader-list"></ol>
 
-      <div class="rsvp">
-        <h2>⚽ RSVP</h2>
+  </section>
 
-        <form id="rsvpForm" novalidate>
-          <label for="rsvpName">Your name</label>
-          <input id="rsvpName" type="text" maxlength="40" required
-            placeholder="Your name" autocomplete="name">
+  <!-- 🏀 BASKETBALL -->
+  <section class="game-card">
+    <h2>🏀 Basketball</h2>
+    <p>Pull the ball back and let go to shoot. You have 60 seconds to score as many baskets as you can!</p>
 
-          <fieldset class="choices">
-            <legend>Can you make it?</legend>
-            <label class="choice">
-              <input type="radio" name="attending" value="yes" required>
-              <span>⚽ I'll be there!</span>
-            </label>
-            <label class="choice">
-              <input type="radio" name="attending" value="no">
-              <span>😢 Can't make it</span>
-            </label>
-          </fieldset>
+    <div class="game-stats">
+      <span>🏀 Score: <strong id="bballScore">0</strong></span>
+      <span>🎯 Shots: <strong id="bballShots">0</strong></span>
+      <span>⏱️ Time: <strong id="bballTime">60</strong>s</span>
+      <span>🏆 Best: <strong id="bballBest">0</strong></span>
+    </div>
 
-          <div id="guestsRow" hidden>
-            <label for="rsvpGuests">How many people are coming (including you)?</label>
-            <select id="rsvpGuests">
-              <option>1</option><option>2</option><option>3</option>
-              <option>4</option><option>5</option><option>6</option>
-              <option>7</option><option>8</option><option>9</option>
-              <option>10</option>
-            </select>
+    <canvas id="bballCanvas" class="more-canvas" width="320" height="420"
+      aria-label="Basketball. Drag the ball down and let go to shoot."></canvas>
 
-            <label class="allergy" for="rsvpPeanut">
-              <input id="rsvpPeanut" type="checkbox">
-              <span>🥜 Allergic to peanuts (me or someone coming with me)</span>
-            </label>
-          </div>
+    <p id="bballMessage" class="more-message" aria-live="polite">Press Start, then drag the ball to shoot!</p>
+    <button id="bballStart" type="button">Start Game</button>
 
-          <label for="rsvpNote">Message for Azlan (optional)</label>
-          <textarea id="rsvpNote" maxlength="200" rows="3"
-            placeholder="Anything we should know?"></textarea>
-
-          <!-- Spam trap: real people never see or fill this in -->
-          <input id="rsvpWebsite" class="trap" type="text" tabindex="-1"
-            autocomplete="off" aria-hidden="true">
-
-          <button id="rsvpSubmit" class="rsvp-btn" type="submit">Send RSVP</button>
-          <p id="rsvpStatus" class="form-status" aria-live="polite"></p>
-        </form>
+    <form id="bbForm" class="fb-form" hidden>
+      <label for="bbName">You scored <span id="bbYouScore">0</span>! Enter your first name and last initial (like Bob S.):</label>
+      <div class="inline-row">
+        <input id="bbName" type="text" maxlength="20" placeholder="e.g. Bob S." autocomplete="off">
+        <button id="bbSubmit" type="submit">Save score</button>
       </div>
-    </section>
+      <p id="bbFormStatus" class="more-message" aria-live="polite"></p>
+    </form>
 
-    <p class="more"><a href="otherstuff/">Click here 4 other stuff</a></p>
-    <p class="more"><a href="morethings/">🎮 Even more games</a></p>
-  </main>
+    <h3>🏆 Basketball Leaderboard</h3>
+    <p id="bbBoardStatus" class="more-message">Loading…</p>
+    <ol id="bbBoard" class="leader-list"></ol>
+  </section>
+
+  <!-- 🏒 PUPPET HOCKEY -->
+  <section class="game-card">
+    <h2>🏒 Puppet Hockey</h2>
+    <p>Skate with <strong>A / D</strong> or the arrow keys. Hold <strong>F</strong> to charge a shot and let go to fire (or hold and release the mouse or your finger). Press <strong>S</strong> to check the other player. Shoot into the 🤖 goal on the right. You have 60 seconds!</p>
+
+    <div class="game-stats">
+      <span>🎭 You: <strong id="hkYou">0</strong></span>
+      <span>🤖 Computer: <strong id="hkAi">0</strong></span>
+      <span>⏱️ Time: <strong id="hkTime">60</strong>s</span>
+    </div>
+
+    <canvas id="hockeyCanvas" class="more-canvas" width="400" height="300"
+      tabindex="0" aria-label="Puppet hockey. Use A and D to skate, hold F to shoot, and S to check."></canvas>
+
+    <p id="hkMessage" class="more-message" aria-live="polite">Press Start to play!</p>
+    <div class="level-row">
+      <label for="hkLevel">Difficulty:</label>
+      <select id="hkLevel">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+    <button id="hkStart" type="button">Start Game</button>
+
+    <form id="hkForm" class="fb-form" hidden>
+      <label for="hkName">You scored <span id="hkYouScore">0</span>! Enter your first name and last initial (like Bob S.):</label>
+      <div class="inline-row">
+        <input id="hkName" type="text" maxlength="20" placeholder="e.g. Bob S." autocomplete="off">
+        <button id="hkSubmit" type="submit">Save score</button>
+      </div>
+      <p id="hkFormStatus" class="more-message" aria-live="polite"></p>
+    </form>
+
+    <h3>🏆 Puppet Hockey Leaderboard</h3>
+    <p id="hkBoardStatus" class="more-message">Loading…</p>
+    <ol id="hkBoard" class="leader-list"></ol>
+  </section>
+
+  <footer>
+    <p><a href="otherstuff/">⚽ Penalty Shootout, Chess and Catch the Cookie →</a></p>
+    <p>Made by Azlan 💜</p>
+  </footer>
 
   <script src="config.js?v=1"></script>
-  <script src="invite.js?v=3"></script>
+  <script src="fullscreen.js?v=1"></script>
+  <script src="board.js?v=1"></script>
+  <script src="fullscreen.js?v=1"></script>
+  <script src="morethings/more.js?v=4"></script>
+  <script src="morethings/craft.js?v=4"></script>
+  <script src="morethings/basketball.js?v=2"></script>
+  <script src="morethings/hockey.js?v=3"></script>
 </body>
 </html>
